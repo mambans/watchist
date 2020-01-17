@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Globals:
+  Api:
+    Cors:
+      AllowHeaders: '''*'''
+      AllowMethods: '''*'''
+      AllowOrigin: '''*'''
+    EndpointConfiguration: REGIONAL
+Resources:
+  AllLists:
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: Username
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Username
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+    Type: AWS::DynamoDB::Table
+  FetchLists:
+    Properties:
+      CodeUri: s3://watchist-deployment/d20b9dc42aae0c869b2efcbbbca09bed
+      Description: Fetch all lists
+      Environment:
+        Variables:
+          USERNAME_TABLE:
+            Ref: AllLists
+      Events:
+        Http:
+          Properties:
+            Method: get
+            Path: /list
+            RequestParameters:
+            - method.request.querystring.username:
+                Required: true
+          Type: Api
+      Handler: fetchLists/handler.handler
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: AllLists
+      Runtime: nodejs10.x
+    Type: AWS::Serverless::Function
+  UpdateList:
+    Properties:
+      CodeUri: s3://watchist-deployment/d20b9dc42aae0c869b2efcbbbca09bed
+      Description: Update a specific list mentioned as a param.
+      Environment:
+        Variables:
+          USERNAME_TABLE:
+            Ref: AllLists
+      Events:
+        Http:
+          Properties:
+            Method: put
+            Path: /list/update
+          RequestParameters:
+          - method.request.querystring.username:
+              Required: true
+          - method.request.querystring.listItems:
+              Required: true
+          - method.request.querystring.listName:
+              Required: true
+          Type: Api
+      Handler: updateList/handler.handler
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: AllLists
+      Runtime: nodejs10.x
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31

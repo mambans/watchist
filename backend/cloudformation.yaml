@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    EndpointConfiguration: REGIONAL
+    Cors:
+      AllowMethods: "'*'"
+      # For example, "'GET,POST,DELETE'". If you omit this property, then SAM will automatically allow all the methods configured for each API.
+      # Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Methods) more details on the value.
+
+      AllowHeaders: "'*'"
+      # For example, "'X-Forwarded-For'". Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers) for more details on the value
+
+      AllowOrigin: "'*'"
+      # For example, "'www.example.com'". Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin) for more details on this value.
+      # MaxAge: Optional. String containing the number of seconds to cache CORS Preflight request.
+      # # For example, "'600'" will cache request for 600 seconds. Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age) for more details on this value
+      # AllowCredentials: true
+      # Header is omitted when false. Checkout [HTTP Spec](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials) for more details on this value.
+Resources:
+  AllLists:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: Username
+          AttributeType: S
+      KeySchema:
+        - AttributeName: Username
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  FetchLists:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: "Fetch all lists"
+      Handler: fetchLists/handler.handler
+      Runtime: nodejs10.x
+      CodeUri: "."
+      Environment:
+        Variables:
+          USERNAME_TABLE: !Ref AllLists
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref AllLists
+      Events:
+        Http:
+          Type: Api
+          Properties:
+            Path: /list
+            Method: get
+            RequestParameters:
+              - method.request.querystring.username:
+                  Required: true
+  UpdateList:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: "Update a specific list mentioned as a param."
+      Handler: updateList/handler.handler
+      Runtime: nodejs10.x
+      CodeUri: "."
+      Environment:
+        Variables:
+          USERNAME_TABLE: !Ref AllLists
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AllLists
+      Events:
+        Http:
+          Type: Api
+          Properties:
+            Path: /list/update
+            Method: put
+          RequestParameters:
+            - method.request.querystring.username:
+                Required: true
+            - method.request.querystring.listItems:
+                Required: true
+            - method.request.querystring.listName:
+                Required: true

@@ -5,7 +5,7 @@ html {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(24, 24, 24) !important;
+  background-color: rgb(40, 40, 40) !important;
   min-height: 100vh;
 }
 
@@ -19,5 +19,5 @@ code {
 }
 
 #root {
-  background-color: rgb(24, 24, 24);
+  background-color: rgb(40, 40, 40);
 }

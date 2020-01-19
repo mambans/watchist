@@ -1,15 +1,12 @@
 import React from "react";
-// import FadeIn from "react-fade-in";
-// import Lottie from "react-lottie";
 import ReactLoading from "react-loading";
-// import "bootstrap/dist/css/bootstrap.css";
 import { StyledLoadingContainer } from "./StyledComponents";
 
-export default () => {
+export default ({ text, fontSize }) => {
   return (
-    <StyledLoadingContainer>
-      <ReactLoading type={"bars"} color={"#ffffff"} height={200} width={200} />
-      <h1>Loading..</h1>
+    <StyledLoadingContainer color={"rgb(50, 50, 50)"} fontSize={fontSize}>
+      <ReactLoading type={"bars"} color={"rgb(50, 50, 50)"} height={200} width={200} />
+      <h1>{text || "Loading.."}</h1>
     </StyledLoadingContainer>
   );
 };

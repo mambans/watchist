@@ -1,21 +1,38 @@
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { sortFunctions, sortListFunc, SortButton } from "./../sort/Sort";
+import SerieItem from "./SerieItem";
 import {
   StyledContainer,
   StyledAddForm,
   StyledList,
-  StyledMovieNotFound,
+  StyledAlert,
   StyledErrorPlaceholder,
 } from "./../home/StyledComponents";
-import SerieItem from "./SerieItem";
 
 export default ({ list, setList }) => {
-  const [error, setError] = useState();
+  const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
+  const [sortOpen, setSortOpen] = useState(false);
+  const [sortAs, setSortAs] = useState(false);
   const postOrderTimer = useRef();
+  const alertTimer = useRef();
+  const customOrder = useRef(list);
+
+  const sortOptions = {
+    Alphabetically: { name: "Alphabetically", func: sortFunctions.alphabetically },
+    IMDB: { name: "Internet Movie Database", func: sortFunctions.score },
+    Seasons: { name: "totalSeasons", func: sortFunctions.first },
+    Year: { name: "Year", func: sortFunctions.first },
+    Runtime: { name: "Runtime", func: sortFunctions.first },
+  };
+
+  const sortList = sortBy => {
+    sortListFunc(sortBy, list, sortOptions, setList);
+  };
 
   const useInput = initialValue => {
     const [value, setValue] = useState(initialValue);
@@ -37,7 +54,7 @@ export default ({ list, setList }) => {
 
   const handleSubmit = evt => {
     evt.preventDefault();
-    setError(null);
+    // setAlert(null);
     addItem();
   };
 
@@ -50,6 +67,12 @@ export default ({ list, setList }) => {
       localStorage.setItem("SerieData", JSON.stringify(newList));
 
       setList([...newList]);
+
+      clearTimeout(alertTimer.current);
+      setAlert({ Error: "Removed: " + p_item, type: "warning" });
+      alertTimer.current = setTimeout(() => {
+        setAlert(null);
+      }, 3000);
 
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
@@ -67,8 +90,8 @@ export default ({ list, setList }) => {
 
   const addItem = async () => {
     if (item && item.trim()) {
-      if (list.includes(item)) {
-        setError({ Response: "False", Error: "Serie already added" });
+      if (list.find(serie => serie.Title.toLowerCase() === item.trim().toLowerCase())) {
+        setAlert({ Response: "False", Error: "Serie already added", type: "warning" });
       } else {
         const year = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")")) || null;
         const res = await axios.get(
@@ -79,8 +102,15 @@ export default ({ list, setList }) => {
 
         if (res.data.Response !== "False") {
           list.push(res.data);
+
           localStorage.setItem("SerieData", JSON.stringify(list));
           setList([...list]);
+
+          clearTimeout(alertTimer.current);
+          setAlert({ Error: "Added: " + res.data.Title, type: "success" });
+          alertTimer.current = setTimeout(() => {
+            setAlert(null);
+          }, 3000);
 
           reseItem();
 
@@ -94,7 +124,7 @@ export default ({ list, setList }) => {
               console.log("TCL: e", e);
             });
         } else {
-          setError(res.data);
+          setAlert({ ...res.data, type: "warning" });
           console.log("ERROR: ", res);
         }
       }
@@ -105,7 +135,7 @@ export default ({ list, setList }) => {
     clearTimeout(postOrderTimer.current);
     setDragSelected(list[index]);
     e.dataTransfer.effectAllowed = "move";
-    e.target.parentNode.style.background = "rgb(45,45,45)";
+    e.target.parentNode.style.background = "rgb(200, 200, 200)";
     e.dataTransfer.setData("text/html", e.target.parentNode);
     e.dataTransfer.setDragImage(e.target.parentNode, 49, 75);
   };
@@ -125,7 +155,7 @@ export default ({ list, setList }) => {
   };
 
   const onDragEnd = e => {
-    e.target.parentNode.style.background = "rgb(24,24,24)";
+    e.target.parentNode.style.background = "rgb(255, 255, 255)";
     localStorage.setItem("SerieData", JSON.stringify(list));
 
     postOrderTimer.current = setTimeout(async () => {
@@ -138,59 +168,60 @@ export default ({ list, setList }) => {
         .catch(e => {
           console.log("TCL: e", e);
         });
-    }, 10000);
+    }, 5000);
   };
 
   return (
     <StyledContainer>
       <h1>Tv series</h1>
       <StyledAddForm onSubmit={handleSubmit}>
-        {error ? (
-          <StyledMovieNotFound
-            onClose={() => setError(false)}
+        {alert ? (
+          <StyledAlert
+            onClose={() => setAlert(false)}
             dismissible
-            key={error.Error}
-            variant='warning'>
-            {error.Error}
-          </StyledMovieNotFound>
+            key={alert.Error}
+            variant={alert.type || "warning"}>
+            {alert.Error}
+          </StyledAlert>
         ) : (
-          // <StyledMovieNotFound id='error'>{error.Error}</StyledMovieNotFound>
           <StyledErrorPlaceholder />
         )}
+        <SortButton
+          text={sortAs}
+          open={sortOpen}
+          setSortOpen={setSortOpen}
+          customOrder={customOrder.current}
+          sortOptions={sortOptions}
+          setList={setList}
+          setSortAs={setSortAs}
+          sortList={sortList}
+        />
         <Form.Group controlId='formGroupUserName'>
-          {/* <Form.Label>Add movie</Form.Label> */}
           <Form.Control type='text' placeholder='The Expanse...' {...bindItem} />
         </Form.Group>
         <Button variant='primary' type='submit'>
           Add
         </Button>
       </StyledAddForm>
-      {list ? (
-        <StyledList>
-          <TransitionGroup component={null}>
-            {list.map((item, idx) => {
-              return (
-                <CSSTransition
-                  key={item.Title}
-                  timeout={1000}
-                  classNames='fadeDown-1s'
-                  unmountOnExit>
-                  <SerieItem
-                    item={item}
-                    removeItem={removeItem}
-                    idx={idx}
-                    onDragStart={onDragStart}
-                    onDragOver={onDragOver}
-                    onDragEnd={onDragEnd}
-                  />
-                </CSSTransition>
-              );
-            })}
-          </TransitionGroup>
-        </StyledList>
-      ) : (
-        <p>Loading</p>
-      )}
+
+      <StyledList height={1050}>
+        <TransitionGroup component={null}>
+          {list.map((item, idx) => {
+            return (
+              <CSSTransition key={item.Title} timeout={1000} classNames='fadeDown-1s' unmountOnExit>
+                <SerieItem
+                  item={item}
+                  removeItem={removeItem}
+                  idx={idx}
+                  onDragStart={onDragStart}
+                  onDragOver={onDragOver}
+                  onDragEnd={onDragEnd}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      </StyledList>
     </StyledContainer>
   );
 };

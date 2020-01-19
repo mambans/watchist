@@ -3,59 +3,63 @@ import React from "react";
 import { DeleteIcon, StyledListItem } from "./../home/StyledComponents";
 
 export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) => {
-  if (item && item.Title) {
-    return (
-      <StyledListItem
-        // key={item.Title}
-        title={`${item.Title}`}
-        onDragOver={e => onDragOver(e, idx)}>
-        <img
-          id='poster'
-          src={item.Poster}
-          alt=''
-          draggable
-          onDragStart={e => onDragStart(e, idx)}
-          onDragEnd={e => {
-            onDragEnd(e);
-          }}
-        />
-        <p id='title'>{`${item.Title} (${item.Year})`}</p>
-        <p id='desc'>{item.Plot}</p>
-        <div id='raitings'>
-          <div>
-            <a href={`https://www.imdb.com/title/${item.imdbID}`} id='rottentomatoes'>
-              <img src={`${process.env.PUBLIC_URL}/logos/rottentomatoes.png`} alt=''></img>
-            </a>
-            {item.Ratings[1].Value}
-          </div>
-          <div>
-            <a href={`https://www.imdb.com/title/${item.imdbID}`} id='imdb'>
-              <img
-                // onClick={() => {
-                //   window.open(`https://www.imdb.com/title/${item.imdbID}`);
-                // }}
-                // id='imdb'
-                src={`${process.env.PUBLIC_URL}/logos/imdb.png`}
-                alt=''></img>
-            </a>
-            {item.Ratings[0].Value}
-          </div>
-          <div>
-            <a href={`https://www.imdb.com/title/${item.imdbID}`} id='metacritic'>
-              <img src={`${process.env.PUBLIC_URL}/logos/metacritic.png`} alt=''></img>
-            </a>
-            {item.Ratings[2].Value}
-          </div>
-        </div>
+  return (
+    <StyledListItem
+      // key={item.Title}
+      title={item.Title}
+      onDragOver={e => onDragOver(e, idx)}>
+      <img
+        id='poster'
+        src={item.Poster}
+        alt=''
+        draggable
+        onDragStart={e => onDragStart(e, idx)}
+        onDragEnd={e => {
+          onDragEnd(e);
+        }}
+      />
+      <p id='boxoffice'>{item.BoxOffice !== "N/A" ? item.BoxOffice : null}</p>
+      <p id='title'>{`${item.Title} (${item.Year})`}</p>
+      <p className='details' id='details'>
+        {item.Genre + " - " + item.Runtime}
+      </p>
+      <p className='details' id='actors'>
+        {item.Actors}
+      </p>
+      <p className='details' id='plot'>
+        {item.Plot}
+      </p>
+      <p className='details' id='awards'>
+        {item.Awards}
+      </p>
 
-        <DeleteIcon
-          onClick={() => {
-            removeItem(item.Title);
-          }}
-        />
-      </StyledListItem>
-    );
-  } else {
-    return <p>Loading...</p>;
-  }
+      <div id='raitings'>
+        {item.Ratings.map(raiting => {
+          return (
+            <div
+              id={raiting.Source.split(" ")
+                .join("")
+                .toLowerCase()}
+              key={raiting.Source}>
+              <a href={`https://www.imdb.com/title/${item.imdbID}`} draggable={false}>
+                <img
+                  src={`${process.env.PUBLIC_URL}/logos/${raiting.Source.split(" ")
+                    .join("")
+                    .toLowerCase()}.png`}
+                  alt=''
+                  draggable={false}></img>
+              </a>
+              {raiting.Value}
+            </div>
+          );
+        })}
+      </div>
+
+      <DeleteIcon
+        onClick={() => {
+          removeItem(item.Title);
+        }}
+      />
+    </StyledListItem>
+  );
 };

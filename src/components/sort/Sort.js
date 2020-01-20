@@ -8,16 +8,18 @@ import { imdb } from "react-icons-kit/fa/imdb";
 import { calendar } from "react-icons-kit/icomoon/calendar";
 import { clockO } from "react-icons-kit/fa/clockO";
 import { ic_sort } from "react-icons-kit/md/ic_sort";
+import { sortAlphaAsc } from "react-icons-kit/fa/sortAlphaAsc";
 
 import { StyledSortDropdown } from "./../home/StyledComponents";
 
 const sortIcons = {
   IMDB: imdb,
-  // RottenTomatoes: ic_sort,
-  // Metacritic: ic_sort,
   Year: calendar,
   Runtime: clockO,
   Boxoffice: ic_attach_money,
+  Alphabetically: sortAlphaAsc,
+  // RottenTomatoes: ic_sort,
+  // Metacritic: ic_sort,
   // Seasons: ic_sort,
 };
 

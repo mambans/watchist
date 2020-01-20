@@ -135,7 +135,7 @@ export default ({ list, setList }) => {
     clearTimeout(postOrderTimer.current);
     setDragSelected(list[index]);
     e.dataTransfer.effectAllowed = "move";
-    e.target.parentNode.style.background = "rgb(200, 200, 200)";
+    e.target.parentNode.style.background = "rgb(80, 80, 80)";
     e.dataTransfer.setData("text/html", e.target.parentNode);
     e.dataTransfer.setDragImage(e.target.parentNode, 49, 75);
   };
@@ -155,7 +155,7 @@ export default ({ list, setList }) => {
   };
 
   const onDragEnd = e => {
-    e.target.parentNode.style.background = "rgb(255, 255, 255)";
+    e.target.parentNode.style.background = "inherit";
     localStorage.setItem("SerieData", JSON.stringify(list));
 
     postOrderTimer.current = setTimeout(async () => {

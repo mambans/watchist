@@ -42,6 +42,12 @@ export default () => {
       })
       .catch(e => {
         console.error(e);
+        if (localStorage.getItem("MovieData")) {
+          setMovies(JSON.parse(localStorage.getItem("MovieData")));
+        }
+        if (localStorage.getItem("SerieData")) {
+          setSeries(JSON.parse(localStorage.getItem("SerieData")));
+        }
       });
   };
 

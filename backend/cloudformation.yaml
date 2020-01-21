@@ -78,3 +78,27 @@ Resources:
                 Required: true
             - method.request.querystring.listName:
                 Required: true
+  RemoveList:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: "Remove a specific list mentioned as a param."
+      Handler: removeList/handler.handler
+      Runtime: nodejs10.x
+      CodeUri: "."
+      Environment:
+        Variables:
+          USERNAME_TABLE: !Ref AllLists
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AllLists
+      Events:
+        Http:
+          Type: Api
+          Properties:
+            Path: /list/remove
+            Method: put
+          RequestParameters:
+            - method.request.querystring.username:
+                Required: true
+            - method.request.querystring.listName:
+                Required: true

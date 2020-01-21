@@ -21,7 +21,7 @@ Resources:
     Type: AWS::DynamoDB::Table
   FetchLists:
     Properties:
-      CodeUri: s3://watchist-deployment/d20b9dc42aae0c869b2efcbbbca09bed
+      CodeUri: s3://watchist-deployment/24ec49a2db074d44d7fa5cdc09aad65d
       Description: Fetch all lists
       Environment:
         Variables:
@@ -43,9 +43,35 @@ Resources:
             Ref: AllLists
       Runtime: nodejs10.x
     Type: AWS::Serverless::Function
+  RemoveList:
+    Properties:
+      CodeUri: s3://watchist-deployment/24ec49a2db074d44d7fa5cdc09aad65d
+      Description: Remove a specific list mentioned as a param.
+      Environment:
+        Variables:
+          USERNAME_TABLE:
+            Ref: AllLists
+      Events:
+        Http:
+          Properties:
+            Method: put
+            Path: /list/remove
+          RequestParameters:
+          - method.request.querystring.username:
+              Required: true
+          - method.request.querystring.listName:
+              Required: true
+          Type: Api
+      Handler: removeList/handler.handler
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: AllLists
+      Runtime: nodejs10.x
+    Type: AWS::Serverless::Function
   UpdateList:
     Properties:
-      CodeUri: s3://watchist-deployment/d20b9dc42aae0c869b2efcbbbca09bed
+      CodeUri: s3://watchist-deployment/24ec49a2db074d44d7fa5cdc09aad65d
       Description: Update a specific list mentioned as a param.
       Environment:
         Variables:

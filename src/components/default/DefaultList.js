@@ -4,7 +4,6 @@ import axios from "axios";
 import React, { useState, useRef } from "react";
 
 import { sortFunctions, sortListFunc, SortButton } from "./../sort/Sort";
-import SerieItem from "./SerieItem";
 import {
   StyledContainer,
   StyledAddForm,
@@ -12,12 +11,12 @@ import {
   StyledAlert,
   StyledErrorPlaceholder,
 } from "./../home/StyledComponents";
+import DefaultItem from "./DefaultItem";
 
 export default ({ list, listName }) => {
   const [thisList, setThisList] = useState(list);
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
-
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAs, setSortAs] = useState(false);
   const postOrderTimer = useRef();
@@ -26,10 +25,6 @@ export default ({ list, listName }) => {
 
   const sortOptions = {
     Alphabetically: { name: "Alphabetically", func: sortFunctions.alphabetically },
-    IMDB: { name: "Internet Movie Database", func: sortFunctions.score },
-    Seasons: { name: "totalSeasons", func: sortFunctions.first },
-    Year: { name: "Year", func: sortFunctions.first },
-    Runtime: { name: "Runtime", func: sortFunctions.first },
   };
 
   const sortList = sortBy => {
@@ -60,13 +55,38 @@ export default ({ list, listName }) => {
     addItem();
   };
 
+  const addItem = async () => {
+    if (item && item.trim()) {
+      if (thisList.find(listItem => listItem.toLowerCase() === item.trim().toLowerCase())) {
+        setAlert({ Response: "False", Error: "Item already added", type: "warning" });
+      } else {
+        thisList.push(item.trim());
+        setThisList([...thisList]);
+
+        setAlert({ Error: "Added: " + item, type: "success" });
+        alertTimer.current = setTimeout(() => {
+          setAlert(null);
+        }, 3000);
+
+        reseItem();
+        await axios
+          .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
+            username: "mambans",
+            listItems: { type: "default", items: thisList },
+            listName: listName,
+          })
+          .catch(e => {
+            console.log("TCL: e", e);
+          });
+      }
+    }
+  };
+
   const removeItem = async p_item => {
     try {
       const newList = thisList.filter(item => {
-        return item.Title.toLowerCase() !== p_item.toLowerCase();
+        return item.toLowerCase() !== p_item.toLowerCase();
       });
-
-      localStorage.setItem("SerieData", JSON.stringify(newList));
 
       setThisList([...newList]);
 
@@ -79,7 +99,7 @@ export default ({ list, listName }) => {
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
-          listItems: { type: "serie", items: newList },
+          listItems: { type: "default", items: newList },
           listName: listName,
         })
         .catch(e => {
@@ -90,66 +110,23 @@ export default ({ list, listName }) => {
     }
   };
 
-  const addItem = async () => {
-    if (item && item.trim()) {
-      if (thisList.find(serie => serie.Title.toLowerCase() === item.trim().toLowerCase())) {
-        setAlert({ Response: "False", Error: "Serie already added", type: "warning" });
-      } else {
-        const year = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")")) || null;
-        const res = await axios.get(
-          `http://www.omdbapi.com/?apikey=235e2a1e&type=series&t=${item.replace(` (${year})`, "")}${
-            year ? `&y=${year}` : ""
-          }`
-        );
-
-        if (res.data.Response !== "False") {
-          thisList.push(res.data);
-
-          localStorage.setItem("SerieData", JSON.stringify(thisList));
-          setThisList([...thisList]);
-
-          clearTimeout(alertTimer.current);
-          setAlert({ Error: "Added: " + res.data.Title, type: "success" });
-          alertTimer.current = setTimeout(() => {
-            setAlert(null);
-          }, 3000);
-
-          reseItem();
-
-          await axios
-            .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-              username: "mambans",
-              listItems: { type: "serie", items: thisList },
-              listName: listName,
-            })
-            .catch(e => {
-              console.log("TCL: e", e);
-            });
-        } else {
-          setAlert({ ...res.data, type: "warning" });
-          console.log("ERROR: ", res);
-        }
-      }
-    }
-  };
-
   const onDragStart = (e, index) => {
     clearTimeout(postOrderTimer.current);
     setDragSelected(thisList[index]);
     e.dataTransfer.effectAllowed = "move";
     e.target.parentNode.style.background = "rgb(80, 80, 80)";
     e.dataTransfer.setData("text/html", e.target.parentNode);
-    e.dataTransfer.setDragImage(e.target.parentNode, 49, 75);
+    e.dataTransfer.setDragImage(e.target.parentNode, 0, 25);
   };
 
   const onDragOver = (e, index) => {
     const draggedOverItem = thisList[index];
 
-    if (dragSelected.Title === draggedOverItem.Title) {
+    if (dragSelected === draggedOverItem) {
       return;
     }
 
-    let items = thisList.filter(item => item.Title !== dragSelected.Title);
+    let items = thisList.filter(item => item !== dragSelected);
 
     items.splice(index, 0, dragSelected);
 
@@ -157,14 +134,15 @@ export default ({ list, listName }) => {
   };
 
   const onDragEnd = e => {
+    // e.target.parentNode.style.background = "rgb(24,24,24)";
     e.target.parentNode.style.background = "inherit";
-    localStorage.setItem("SerieData", JSON.stringify(thisList));
+    localStorage.setItem("MovieData", JSON.stringify(thisList));
 
     postOrderTimer.current = setTimeout(async () => {
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
-          listItems: { type: "serie", items: thisList },
+          listItems: { type: "default", items: thisList },
           listName: listName,
         })
         .catch(e => {
@@ -199,7 +177,8 @@ export default ({ list, listName }) => {
           sortList={sortList}
         />
         <Form.Group controlId='formGroupUserName'>
-          <Form.Control type='text' placeholder='The Expanse...' {...bindItem} />
+          {/* <Form.Label>Add movie</Form.Label> */}
+          <Form.Control type='text' placeholder='Lord of the rings...' {...bindItem} />
         </Form.Group>
         <Button variant='primary' type='submit'>
           Add
@@ -210,8 +189,8 @@ export default ({ list, listName }) => {
         <TransitionGroup component={null}>
           {thisList.map((item, idx) => {
             return (
-              <CSSTransition key={item.Title} timeout={1000} classNames='fadeDown-1s' unmountOnExit>
-                <SerieItem
+              <CSSTransition key={item} timeout={1000} classNames='fadeDown-small-1s' unmountOnExit>
+                <DefaultItem
                   item={item}
                   removeItem={removeItem}
                   idx={idx}

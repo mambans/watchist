@@ -58,8 +58,9 @@ const sortFunctions = {
   },
 
   alphabetically: (a, b, prop) => {
-    const aText = a.Title.toLowerCase();
-    const bText = b.Title.toLowerCase();
+    const aText = a.Title ? a.Title.toLowerCase() : a.toLowerCase();
+    const bText = b.Title ? b.Title.toLowerCase() : b.toLowerCase();
+    // const bText = b.Title.toLowerCase() || b;
     return aText < bText ? -1 : aText > bText ? 1 : 0;
   },
 };

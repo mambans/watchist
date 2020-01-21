@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { ic_delete } from "react-icons-kit/md/ic_delete";
-// import { ic_playlist_add } from "react-icons-kit/md/ic_playlist_add";
+import { ic_drag_handle } from "react-icons-kit/md/ic_drag_handle";
 import { Icon } from "react-icons-kit";
 import { Form, Alert } from "react-bootstrap";
 
@@ -20,17 +20,39 @@ const DeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 24 })`
   bottom: 0;
   opacity: 0.7;
   z-index: 10;
+  transition: all 300ms;
+
+  &:hover {
+    color: red;
+    opacity: 1;
+  }
 `;
 
-// const MoveIcon = styled(Icon).attrs({ icon: ic_playlist_add, size: 30 })`
-//   color: white;
-//   margin: 5px;
-//   cursor: pointer;
-//   position: absolute;
-//   right: 0;
-//   top: 0;
-//   opacity: 0.7;
-// `;
+const ListDeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 18 })`
+  color: darkred;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  z-index: 10;
+  margin-left: 3px;
+  height: inherit;
+  align-items: center;
+  display: flex !important;
+  transition: all 300ms;
+
+  &:hover {
+    color: red;
+    opacity: 1;
+  }
+`;
+
+const MoveIcon = styled(Icon).attrs({ icon: ic_drag_handle, size: 30 })`
+  color: white;
+  margin-right: 15px;
+  cursor: pointer;
+  opacity: 0.7;
+`;
 
 const StyledContainer = styled.div`
   color: rgb(240, 240, 240);
@@ -44,6 +66,15 @@ const StyledContainer = styled.div`
     margin: 0;
     padding: 10px;
   }
+`;
+
+const StyledSimpleListItem = styled.li`
+  position: relative;
+  font-size: 1.2rem;
+  height: 50px;
+  align-items: center;
+  display: flex;
+  padding: 10px;
 `;
 
 const StyledListItem = styled.li`
@@ -307,6 +338,7 @@ const StyledSidebar = styled.ul`
   box-shadow: 2px 0px 4px #64646452;
   grid-area: sidebar;
   margin: 0;
+  height: ${props => props.height - 110}px;
 
   @media screen and (max-width: 1920px) {
     max-height: 81%;
@@ -329,9 +361,8 @@ const StyledSidebar = styled.ul`
   }
 `;
 
-const StyledSidarbarItem = styled.li`
-  padding: 10px;
-  -webkit-transition: all 200ms;
+const StyledSidarbarAddList = styled.li`
+  /* padding: 10px 10px; */
   transition: all 300ms;
   box-shadow: 0px 2px 0px #ffffff70;
   font-weight: bold;
@@ -339,21 +370,91 @@ const StyledSidarbarItem = styled.li`
   /* color: rgb(220, 220, 220); */
   color: ${props => (props.active ? "white" : "rgb(220, 220, 220)")};
 
+  min-height: 50px;
+  align-content: center;
+  display: grid;
+
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+
   i {
-    padding-left: ${props => (props.active ? "25px" : "5px")};
-    transition: all 200ms;
-    position: absolute;
+    color: inherit;
+  }
+
+  select {
+    margin-bottom: 10px;
+    text-transform: capitalize;
+
+    option {
+      text-transform: capitalize;
+    }
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+
+  button#toggleAdd {
+    padding: 12px 10px;
+    background: none;
+    border: none;
+    color: white;
+    outline: none;
+    font-size: 0.85rem;
+  }
+
+  button#submit {
+    margin-bottom: 5px;
+    width: 50%;
   }
 
   &:hover {
     /* background: rgb(35, 35, 35); */
-    padding: 15px 10px;
+    /* padding: 15px 10px; */
+    font-size: 1.05rem;
+    box-shadow: 0px 2px 0px #c0c0c0;
+    color: white;
+  }
+`;
+
+const StyledSidarbarItem = styled.li`
+  /* padding: 13px 10px; */
+  transition: all 300ms;
+  box-shadow: 0px 2px 0px #ffffff70;
+  font-weight: bold;
+  cursor: pointer;
+  /* color: rgb(220, 220, 220); */
+  color: ${props => (props.active ? "white" : "rgb(220, 220, 220)")};
+
+  height: 50px;
+  align-content: center;
+  display: grid;
+
+  /* display: flex;
+  align-items: center;
+  justify-content: center; */
+
+  i.arrow {
+    padding-left: ${props => (props.active ? "25px" : "5px")};
+    transition: all 200ms;
+    position: absolute;
+    color: inherit;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  &:hover {
+    /* background: rgb(35, 35, 35); */
+    /* padding: 15px 10px; */
     font-size: 1.05rem;
     box-shadow: 0px 2px 0px #c0c0c0;
     color: white;
 
-    i {
-      /* padding-left: 25px; */
+    i.delete {
+      opacity: 0.5;
     }
   }
 `;
@@ -374,7 +475,7 @@ const StyledMainContainer = styled.div`
   padding-right: 10px;
   max-height: calc(88%);
 
-  top: 10%;
+  top: 7%;
   position: absolute;
 
   @media screen and (max-width: 1920px) {
@@ -460,17 +561,34 @@ const StyledSortDropdown = styled.ul`
   }
 `;
 
+const StyledTextArea = styled.textarea`
+  margin-top: 10px;
+  overflow-y: auto;
+  resize: none;
+  background: #212020;
+  color: rgb(240, 240, 240);
+  font-size: 1.1rem;
+  border: none;
+  box-shadow: 0px 0px 5px #524e4e;
+  padding: 7px;
+  width: 100%;
+  height: 100%;
+  scrollbar-color: rgb(33, 53, 66) rgb(5, 8, 10) !important;
+  scrollbar-width: thin !important;
+`;
+
 export {
   // StyledListContainer,
   StyledContainer,
   DeleteIcon,
   StyledAddForm,
   StyledListItem,
+  StyledSimpleListItem,
   // StyledSearchSuggestionList,
   StyledList,
   StyledAlert,
   StyledErrorPlaceholder,
-  // MoveIcon,
+  MoveIcon,
   StyledLoadingContainer,
   StyledSidebar,
   StyledCenterContainer,
@@ -478,4 +596,7 @@ export {
   StyledRightListContainer,
   StyledSidarbarItem,
   StyledSortDropdown,
+  ListDeleteIcon,
+  StyledSidarbarAddList,
+  StyledTextArea,
 };

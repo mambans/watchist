@@ -49,3 +49,55 @@
   -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
   -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
+
+.fadeDown-small-1s-enter {
+  opacity: 0;
+  top: -50px !important;
+  height: 0px !important;
+  transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+}
+.fadeDown-small-1s-enter-active {
+  opacity: 1;
+  top: 0px !important;
+  height: 50px !important;
+  transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+}
+.fadeDown-small-1s-exit {
+  opacity: 1;
+  top: 0px !important;
+  height: 50px !important;
+  transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+}
+.fadeDown-small-1s-exit-active {
+  opacity: 0;
+  top: -50px !important;
+  height: 0px !important;
+  transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+}
+
+.fadeDown-small-1s-exit-done {
+  opacity: 0;
+  top: -50px !important;
+  height: 0px !important;
+  transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+}

@@ -13,14 +13,15 @@ import {
   StyledErrorPlaceholder,
 } from "./../home/StyledComponents";
 
-export default ({ list, setList }) => {
+export default ({ list, listName }) => {
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
+  const [thisList, setThisList] = useState(list);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAs, setSortAs] = useState(false);
   const postOrderTimer = useRef();
   const alertTimer = useRef();
-  const customOrder = useRef(list);
+  const customOrder = useRef(thisList);
 
   const sortOptions = {
     Alphabetically: { name: "Alphabetically", func: sortFunctions.alphabetically },
@@ -33,7 +34,7 @@ export default ({ list, setList }) => {
   };
 
   const sortList = sortBy => {
-    sortListFunc(sortBy, list, sortOptions, setList);
+    sortListFunc(sortBy, thisList, sortOptions, setThisList);
   };
 
   const useInput = initialValue => {
@@ -62,13 +63,13 @@ export default ({ list, setList }) => {
 
   const removeItem = async p_item => {
     try {
-      const newList = list.filter(item => {
+      const newList = thisList.filter(item => {
         return item.Title.toLowerCase() !== p_item.toLowerCase();
       });
 
       localStorage.setItem("MovieData", JSON.stringify(newList));
 
-      setList([...newList]);
+      setThisList([...newList]);
 
       clearTimeout(alertTimer.current);
       setAlert({ Error: "Removed: " + p_item, type: "warning" });
@@ -79,8 +80,8 @@ export default ({ list, setList }) => {
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
-          listItems: newList,
-          listName: "Movies",
+          listItems: { type: "movie", items: newList },
+          listName: listName,
         })
         .catch(e => {
           console.log("TCL: e", e);
@@ -92,7 +93,7 @@ export default ({ list, setList }) => {
 
   const addItem = async () => {
     if (item && item.trim()) {
-      if (list.find(movie => movie.Title.toLowerCase() === item.trim().toLowerCase())) {
+      if (thisList.find(movie => movie.Title.toLowerCase() === item.trim().toLowerCase())) {
         setAlert({ Response: "False", Error: "Movie already added", type: "warning" });
       } else {
         const year = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")")) || null;
@@ -102,11 +103,11 @@ export default ({ list, setList }) => {
           }`
         );
         if (res.data.Response !== "False") {
-          list.push(res.data);
+          thisList.push(res.data);
 
-          localStorage.setItem("MovieData", JSON.stringify(list));
+          localStorage.setItem("MovieData", JSON.stringify(thisList));
 
-          setList([...list]);
+          setThisList([...thisList]);
           clearTimeout(alertTimer.current);
           setAlert({ Error: "Added: " + res.data.Title, type: "success" });
           alertTimer.current = setTimeout(() => {
@@ -117,8 +118,8 @@ export default ({ list, setList }) => {
           await axios
             .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
               username: "mambans",
-              listItems: list,
-              listName: "Movies",
+              listItems: { type: "movie", items: thisList },
+              listName: listName,
             })
 
             .catch(e => {
@@ -134,7 +135,7 @@ export default ({ list, setList }) => {
 
   const onDragStart = (e, index) => {
     clearTimeout(postOrderTimer.current);
-    setDragSelected(list[index]);
+    setDragSelected(thisList[index]);
     e.dataTransfer.effectAllowed = "move";
     e.target.parentNode.style.background = "rgb(80, 80, 80)";
     e.dataTransfer.setData("text/html", e.target.parentNode);
@@ -142,30 +143,30 @@ export default ({ list, setList }) => {
   };
 
   const onDragOver = (e, index) => {
-    const draggedOverItem = list[index];
+    const draggedOverItem = thisList[index];
 
     if (dragSelected.Title === draggedOverItem.Title) {
       return;
     }
 
-    let items = list.filter(item => item.Title !== dragSelected.Title);
+    let items = thisList.filter(item => item.Title !== dragSelected.Title);
 
     items.splice(index, 0, dragSelected);
 
-    setList(items);
+    setThisList(items);
   };
 
   const onDragEnd = e => {
     // e.target.parentNode.style.background = "rgb(24,24,24)";
     e.target.parentNode.style.background = "inherit";
-    localStorage.setItem("MovieData", JSON.stringify(list));
+    localStorage.setItem("MovieData", JSON.stringify(thisList));
 
     postOrderTimer.current = setTimeout(async () => {
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
-          listItems: list,
-          listName: "Movies",
+          listItems: { type: "movie", items: thisList },
+          listName: listName,
         })
         .catch(e => {
           console.log("TCL: e", e);
@@ -175,7 +176,7 @@ export default ({ list, setList }) => {
 
   return (
     <StyledContainer>
-      <h1>Movies</h1>
+      <h1>{listName}</h1>
       <StyledAddForm onSubmit={handleSubmit}>
         {alert ? (
           <StyledAlert
@@ -194,7 +195,7 @@ export default ({ list, setList }) => {
           setSortOpen={setSortOpen}
           customOrder={customOrder.current}
           sortOptions={sortOptions}
-          setList={setList}
+          setList={setThisList}
           setSortAs={setSortAs}
           sortList={sortList}
         />
@@ -214,9 +215,9 @@ export default ({ list, setList }) => {
         </StyledSearchSuggestionList> */}
       </StyledAddForm>
 
-      <StyledList height={1050}>
+      <StyledList height={950}>
         <TransitionGroup component={null}>
-          {list.map((item, idx) => {
+          {thisList.map((item, idx) => {
             return (
               <CSSTransition key={item.Title} timeout={1000} classNames='fadeDown-1s' unmountOnExit>
                 <MovieItem

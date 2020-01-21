@@ -485,15 +485,15 @@ const StyledMainContainer = styled.div`
   #logo {
     grid-area: logo;
     margin: 0;
-    padding: 7px;
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
 
     img {
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
+      /* width: 96px; */
+      height: 90px;
+      /* border-radius: 50%; */
     }
   }
 `;

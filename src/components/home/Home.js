@@ -147,7 +147,7 @@ export default () => {
     <StyledCenterContainer>
       <StyledMainContainer height={950} width={1200}>
         <div id='logo'>
-          <img src={`${process.env.PUBLIC_URL}/logos/watchist.png`} alt='' />
+          <img src={`${process.env.PUBLIC_URL}/logo.png`} alt='' />
         </div>
         <StyledSidebar height={950}>
           <p id='sidebarHeader'>

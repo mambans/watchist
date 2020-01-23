@@ -11,18 +11,29 @@ import {
   StyledList,
   StyledAlert,
   StyledErrorPlaceholder,
-} from "./../home/StyledComponents";
+  StyledSearchSuggestionList,
+  SearchIcon,
+  ModalBackdrop,
+  ScrollToTopIcon,
+  StyledScollToTop,
+} from "./../StyledComponents";
 
 export default ({ list, listName }) => {
   const [thisList, setThisList] = useState(list);
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
+  const [suggestionsOpen, setSuggestionsOpen] = useState();
+  const [suggestions, setSuggestions] = useState({});
 
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAs, setSortAs] = useState(false);
   const postOrderTimer = useRef();
   const alertTimer = useRef();
   const customOrder = useRef(thisList);
+  const formInput = useRef();
+  const previousSearch = useRef();
+  const newAddedRef = useRef();
+  const topItemRef = useRef();
 
   const sortOptions = {
     Alphabetically: { name: "Alphabetically", func: sortFunctions.alphabetically },
@@ -43,6 +54,12 @@ export default ({ list, listName }) => {
       value,
       setValue,
       reset: () => setValue(""),
+      manualSet: {
+        onClick: event => {
+          setValue(event.target.textContent);
+          setSuggestionsOpen(false);
+        },
+      },
       bind: {
         value,
         onChange: event => {
@@ -52,7 +69,7 @@ export default ({ list, listName }) => {
     };
   };
 
-  const { value: item, bind: bindItem, reset: reseItem } = useInput("");
+  const { value: item, bind: bindItem, reset: reseItem, manualSet } = useInput("");
 
   const handleSubmit = evt => {
     evt.preventDefault();
@@ -83,10 +100,39 @@ export default ({ list, listName }) => {
           listName: listName,
         })
         .catch(e => {
-          console.log("TCL: e", e);
+          console.error(e);
         });
     } catch (error) {
-      console.log("TCL: error", error);
+      console.error(error);
+    }
+  };
+
+  const fetchSearchSuggestions = async search => {
+    if (previousSearch.current !== search) {
+      const year = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")")) || null;
+      const res = await axios
+        .get(
+          `http://www.omdbapi.com/?apikey=235e2a1e&type=series&s=${search.replace(
+            ` (${year})`,
+            ""
+          )}${year ? `&y=${year}` : ""}`
+        )
+        .then(result => {
+          previousSearch.current = search;
+          return result;
+        })
+        .catch(e => {
+          console.error(e);
+        });
+
+      if (res.data.Response !== "False") {
+        setSuggestions(res.data.Search);
+        setSuggestionsOpen(true);
+      } else {
+        setAlert({ ...res.data, type: "warning" });
+      }
+    } else {
+      setSuggestionsOpen(true);
     }
   };
 
@@ -108,6 +154,14 @@ export default ({ list, listName }) => {
           localStorage.setItem("SerieData", JSON.stringify(thisList));
           setThisList([...thisList]);
 
+          setTimeout(() => {
+            newAddedRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "end",
+              inline: "end",
+            });
+          }, 0);
+
           clearTimeout(alertTimer.current);
           setAlert({ Error: "Added: " + res.data.Title, type: "success" });
           alertTimer.current = setTimeout(() => {
@@ -123,11 +177,24 @@ export default ({ list, listName }) => {
               listName: listName,
             })
             .catch(e => {
-              console.log("TCL: e", e);
+              console.error(e);
             });
         } else {
           setAlert({ ...res.data, type: "warning" });
-          console.log("ERROR: ", res);
+          await axios
+            .get(
+              `http://www.omdbapi.com/?apikey=235e2a1e&type=series&s=${item.replace(
+                ` (${year})`,
+                ""
+              )}${year ? `&y=${year}` : ""}`
+            )
+            .then(res => {
+              setSuggestions(res.data.Search);
+              setSuggestionsOpen(true);
+            })
+            .catch(e => {
+              console.error(e);
+            });
         }
       }
     }
@@ -168,7 +235,7 @@ export default ({ list, listName }) => {
           listName: listName,
         })
         .catch(e => {
-          console.log("TCL: e", e);
+          console.error(e);
         });
     }, 5000);
   };
@@ -199,14 +266,55 @@ export default ({ list, listName }) => {
           sortList={sortList}
         />
         <Form.Group controlId='formGroupUserName'>
-          <Form.Control type='text' placeholder='The Expanse...' {...bindItem} />
+          <Form.Control
+            type='text'
+            placeholder='The Expanse...'
+            {...bindItem}
+            ref={formInput}
+            style={{
+              borderRadius: suggestions && suggestionsOpen ? "0.25rem 0.25rem 0 0" : "0.25rem",
+            }}
+          />
         </Form.Group>
         <Button variant='primary' type='submit'>
           Add
         </Button>
+        <Button
+          id='searchBtn'
+          onClick={() => {
+            fetchSearchSuggestions(formInput.current.value.trim());
+          }}>
+          <SearchIcon />
+        </Button>
+
+        <CSSTransition
+          key='StyledSearchSuggestionList'
+          in={suggestions && suggestionsOpen}
+          timeout={250}
+          classNames='slideDown-250ms'
+          unmountOnExit>
+          <StyledSearchSuggestionList height={"520px"}>
+            {Object.values(suggestions).map(item => {
+              return (
+                <li key={item.imdbID} {...manualSet}>
+                  <img alt='' src={item.Poster}></img>
+                  {`${item.Title} (${item.Year})`}
+                </li>
+              );
+            })}
+          </StyledSearchSuggestionList>
+        </CSSTransition>
+        {suggestions && suggestionsOpen ? (
+          <ModalBackdrop
+            onClick={() => {
+              setSuggestionsOpen(false);
+            }}
+          />
+        ) : null}
       </StyledAddForm>
 
       <StyledList height={950}>
+        <div ref={topItemRef} style={{ height: "1px" }}></div>
         <TransitionGroup component={null}>
           {thisList.map((item, idx) => {
             return (
@@ -223,6 +331,18 @@ export default ({ list, listName }) => {
             );
           })}
         </TransitionGroup>
+        <StyledScollToTop
+          ref={newAddedRef}
+          onClick={() => {
+            topItemRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "end",
+              inline: "end",
+            });
+          }}>
+          <ScrollToTopIcon />
+          <p>Scroll to top</p>
+        </StyledScollToTop>
       </StyledList>
     </StyledContainer>
   );

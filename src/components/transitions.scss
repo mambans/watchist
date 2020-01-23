@@ -2,52 +2,25 @@
   opacity: 0;
   top: -150px !important;
   height: 0px !important;
-  transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  transition: opacity 1000ms, top 1000ms, height 500ms;
 }
 .fadeDown-1s-enter-active {
   opacity: 1;
   top: 0px !important;
   height: 150px !important;
-  transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+  transition: opacity 1000ms, top 1000ms, height 500ms;
 }
 .fadeDown-1s-exit {
   opacity: 1;
   top: 0px !important;
   height: 150px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 .fadeDown-1s-exit-active {
   opacity: 0;
   top: -150px !important;
   height: 0px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
-}
-
-.fadeDown-1s-exit-done {
-  opacity: 0;
-  top: -150px !important;
-  height: 0px !important;
-  transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 
 .fadeDown-small-1s-enter {
@@ -55,40 +28,23 @@
   top: -50px !important;
   height: 0px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 .fadeDown-small-1s-enter-active {
   opacity: 1;
   top: 0px !important;
   height: 50px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 .fadeDown-small-1s-exit {
   opacity: 1;
   top: 0px !important;
   height: 50px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 .fadeDown-small-1s-exit-active {
   opacity: 0;
   top: -50px !important;
   height: 0px !important;
-  transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 
 .fadeDown-small-1s-exit-done {
@@ -96,8 +52,46 @@
   top: -50px !important;
   height: 0px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -webkit-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -moz-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -ms-transition: opacity 1000ms, top 1000ms, height 1000ms;
-  -o-transition: opacity 1000ms, top 1000ms, height 1000ms;
+}
+
+.slideDown-250ms-enter {
+  opacity: 0;
+  height: 0px !important;
+  transition: opacity 250ms, height 250ms;
+}
+.slideDown-250ms-enter-active {
+  opacity: 1;
+  height: 520px !important;
+  transition: opacity 250ms, height 250ms;
+}
+.slideDown-250ms-exit {
+  opacity: 1;
+  height: 520px !important;
+  transition: opacity 250ms, height 250ms;
+}
+.slideDown-250ms-exit-active {
+  opacity: 0;
+  height: 0px !important;
+  transition: opacity 250ms, height 250ms;
+}
+
+.slideDown-200ms-enter {
+  opacity: 0;
+  height: 0px !important;
+  transition: opacity 200ms, height 200ms;
+}
+.slideDown-200ms-enter-active {
+  opacity: 1;
+  height: unset !important;
+  transition: opacity 200ms, height 200ms;
+}
+.slideDown-200ms-exit {
+  opacity: 1;
+  height: unset !important;
+  transition: opacity 200ms, height 200ms;
+}
+.slideDown-200ms-exit-active {
+  opacity: 0;
+  height: 0px !important;
+  transition: opacity 200ms, height 200ms;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DeleteIcon, StyledSimpleListItem, MoveIcon } from "./../home/StyledComponents";
+import { DeleteIcon, StyledSimpleListItem, MoveIcon } from "./../StyledComponents";
 
 export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) => {
   return (

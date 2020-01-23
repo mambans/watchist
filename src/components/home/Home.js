@@ -1,5 +1,4 @@
 "use trict";
-import { ic_chevron_right } from "react-icons-kit/md/ic_chevron_right";
 import { ic_list } from "react-icons-kit/md/ic_list";
 import axios from "axios";
 import Icon from "react-icons-kit";
@@ -22,7 +21,7 @@ import {
   StyledSidarbarItem,
   ListDeleteIcon,
   StyledSidarbarAddList,
-} from "./../home/StyledComponents";
+} from "./StyledComponents";
 
 export default () => {
   document.title = "Watchist | Lists";
@@ -170,17 +169,12 @@ export default () => {
                           }}
                         />
                         <div
+                          id='button'
                           onClick={() => {
                             setListName(name);
-                          }}
-                          style={{
-                            width: "90%",
-                            marginLeft: "10%",
-                            textAlign: "left",
-                            paddingLeft: "40px",
                           }}>
                           {name}
-                          <Icon className='arrow' icon={ic_chevron_right} size={24}></Icon>
+                          {/* <Icon className='arrow' icon={ic_chevron_right} size={24}></Icon> */}
                         </div>
                       </StyledSidarbarItem>
                     </CSSTransition>
@@ -196,10 +190,7 @@ export default () => {
                 setShowAddInput(!showAddInput);
               }}>
               Add list
-              <Icon
-                style={{ position: "relative", paddingLeft: "5px" }}
-                icon={ic_playlist_add}
-                size={24}></Icon>
+              <Icon icon={ic_playlist_add} size={24}></Icon>
             </button>
             {showAddInput ? (
               <Form onSubmit={handleSubmit}>

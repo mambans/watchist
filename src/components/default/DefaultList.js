@@ -10,7 +10,7 @@ import {
   StyledList,
   StyledAlert,
   StyledErrorPlaceholder,
-} from "./../home/StyledComponents";
+} from "./../StyledComponents";
 import DefaultItem from "./DefaultItem";
 
 export default ({ list, listName }) => {

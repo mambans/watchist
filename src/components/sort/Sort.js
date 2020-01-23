@@ -2,15 +2,15 @@ import React from "react";
 import Icon from "react-icons-kit";
 import styled from "styled-components";
 import { Button } from "react-bootstrap";
-
 import { ic_attach_money } from "react-icons-kit/md/ic_attach_money";
 import { imdb } from "react-icons-kit/fa/imdb";
 import { calendar } from "react-icons-kit/icomoon/calendar";
 import { clockO } from "react-icons-kit/fa/clockO";
 import { ic_sort } from "react-icons-kit/md/ic_sort";
 import { sortAlphaAsc } from "react-icons-kit/fa/sortAlphaAsc";
+import { CSSTransition } from "react-transition-group";
 
-import { StyledSortDropdown } from "./../home/StyledComponents";
+import { ModalBackdrop } from "./../StyledComponents";
 
 const sortIcons = {
   IMDB: imdb,
@@ -84,14 +84,39 @@ const StyledSortButton = styled(Button).attrs({ variant: "secondary" })`
   }
 `;
 
-const SortButtonBackdrop = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 11;
-  cursor: default;
+const StyledSortDropdown = styled.ul`
+  color: white;
+  /* background: rgb(56, 56, 56); */
+  /* background: #5a6268; */
+  background: inherit;
+  height: max-content;
+  width: min-content;
+  margin: auto;
+  border-radius: 0 0 10px 10px;
+  position: absolute;
+  z-index: 12;
+  list-style: none;
+  padding: 0;
+  padding-top: 10px;
+  /* border-top: 1px solid #b7b7b7; */
+  margin-top: 5px;
+
+  width: calc((1200px - 220px) * 0.18);
+
+  li {
+    border-top: thin solid rgba(218, 218, 218, 0.5);
+    padding: 5px;
+    transition: all 300ms;
+    font-size: 0.95rem;
+
+    i {
+      padding-right: 5px;
+    }
+
+    &:hover {
+      font-weight: bold;
+    }
+  }
 `;
 
 const SortButton = ({
@@ -111,37 +136,38 @@ const SortButton = ({
       }}>
       <Icon icon={sortIcons[text] || ic_sort}></Icon>
       {text || "Sort by"}
+
       {open ? (
-        <>
-          <SortButtonBackdrop
-            onClick={() => {
-              setSortOpen(false);
-            }}
-          />
-          <StyledSortDropdown>
-            <li
-              onClick={() => {
-                setSortAs("Default");
-                setList(customOrder);
-              }}>
-              Default
-            </li>
-            {Object.keys(sortOptions).map(key => {
-              return (
-                <li
-                  key={key}
-                  onClick={() => {
-                    setSortAs(key);
-                    sortList(key);
-                  }}>
-                  <Icon icon={sortIcons[key] || ic_sort}></Icon>
-                  {key}
-                </li>
-              );
-            })}
-          </StyledSortDropdown>
-        </>
+        <ModalBackdrop
+          onClick={() => {
+            setSortOpen(false);
+          }}
+        />
       ) : null}
+      <CSSTransition in={open} timeout={200} classNames='slideDown-200ms' unmountOnExit>
+        <StyledSortDropdown>
+          <li
+            onClick={() => {
+              setSortAs("Default");
+              setList(customOrder);
+            }}>
+            Default
+          </li>
+          {Object.keys(sortOptions).map(key => {
+            return (
+              <li
+                key={key}
+                onClick={() => {
+                  setSortAs(key);
+                  sortList(key);
+                }}>
+                <Icon icon={sortIcons[key] || ic_sort}></Icon>
+                {key}
+              </li>
+            );
+          })}
+        </StyledSortDropdown>
+      </CSSTransition>
     </StyledSortButton>
   );
 };

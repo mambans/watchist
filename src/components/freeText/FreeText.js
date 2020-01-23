@@ -7,7 +7,7 @@ import {
   StyledAlert,
   StyledErrorPlaceholder,
   StyledTextArea,
-} from "./../home/StyledComponents";
+} from "./../StyledComponents";
 
 export default ({ list, listName }) => {
   const [alert, setAlert] = useState();

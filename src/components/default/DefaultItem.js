@@ -6,10 +6,11 @@ export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) =
   return (
     <StyledSimpleListItem
       // key={item.Title}
-      onDragOver={e => onDragOver(e, idx)}
+
       title={item}>
       <MoveIcon
         draggable
+        onDragOver={e => onDragOver(e, idx)}
         onDragStart={e => onDragStart(e, idx)}
         onDragEnd={e => {
           onDragEnd(e);

@@ -126,17 +126,18 @@ export default ({ list, listName }) => {
       return;
     }
 
-    let items = thisList.filter(item => item !== dragSelected);
+    if (draggedOverItem) {
+      let items = thisList.filter(item => item !== dragSelected);
 
-    items.splice(index, 0, dragSelected);
+      items.splice(index, 0, dragSelected);
 
-    setThisList(items);
+      setThisList(items);
+    }
   };
 
   const onDragEnd = e => {
     // e.target.parentNode.style.background = "rgb(24,24,24)";
     e.target.parentNode.style.background = "inherit";
-    localStorage.setItem("MovieData", JSON.stringify(thisList));
 
     postOrderTimer.current = setTimeout(async () => {
       await axios

@@ -84,8 +84,6 @@ export default ({ list, listName }) => {
         return item.Title.toLowerCase() !== p_item.toLowerCase();
       });
 
-      localStorage.setItem("MovieData", JSON.stringify(newList));
-
       setThisList([...newList]);
 
       clearTimeout(alertTimer.current);
@@ -151,7 +149,6 @@ export default ({ list, listName }) => {
         if (res.data.Response !== "False") {
           thisList.push(res.data);
 
-          localStorage.setItem("MovieData", JSON.stringify(thisList));
           setThisList([...thisList]);
 
           setTimeout(() => {
@@ -225,7 +222,6 @@ export default ({ list, listName }) => {
   const onDragEnd = e => {
     // e.target.parentNode.style.background = "rgb(24,24,24)";
     e.target.parentNode.style.background = "inherit";
-    localStorage.setItem("MovieData", JSON.stringify(thisList));
 
     postOrderTimer.current = setTimeout(async () => {
       await axios

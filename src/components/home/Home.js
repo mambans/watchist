@@ -40,12 +40,12 @@ export default () => {
       return <SeriesList list={list} listName={listName} />;
     },
     freetext: list => {
-      return <FreeText list={list} listName={listName} />;
+      return <FreeText list={list} listName={listName} allLists={allLists} />;
     },
   };
 
-  const RenderList = (type, list) => {
-    return listComponents[type || "default"](list);
+  const RenderListComp = () => {
+    return listComponents[allLists[listName].type || "default"](allLists[listName].items);
   };
 
   const fetchLists = async () => {
@@ -103,7 +103,7 @@ export default () => {
     await axios
       .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
         username: "mambans",
-        listItems: { type: type || "default", items: type === "freetext" ? "" : [] },
+        listItems: { type: type || "default", items: type === "freetext" ? "''" : [] },
         listName: item,
       })
       .catch(e => {
@@ -138,7 +138,7 @@ export default () => {
   };
 
   useEffect(() => {
-    // setAllLists(JSON.parse(localStorage.getItem("allLists")));
+    // setAllLists(JSON.pars[RenderList]localStorage.getItem("allLists")));
     fetchLists();
   }, []);
 
@@ -231,7 +231,7 @@ export default () => {
         </StyledSidebar>
         <StyledRightListContainer height={950}>
           {allLists ? (
-            RenderList(allLists[listName].type, allLists[listName].items)
+            <RenderListComp />
           ) : (
             <Loading text={"Fetching data from server.."} fontSize={"1.5rem"} />
           )}

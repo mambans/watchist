@@ -232,6 +232,16 @@ const StyledRightListContainer = styled.div`
   /* transition: all 1s; */
   grid-area: list;
 
+  color: rgb(240, 240, 240);
+  padding-left: 10px;
+  padding-right: 1px;
+
+  h1 {
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+  }
+
   @media screen and (max-width: 1920px) {
     max-height: calc(100vh - 13%);
   }

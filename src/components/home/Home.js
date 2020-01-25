@@ -25,27 +25,103 @@ import {
 
 export default () => {
   document.title = "Watchist | Lists";
+  const [allLists, setAllLists] = useState();
   const [listName, setListName] = useState("Movies");
   const [showAddInput, setShowAddInput] = useState(false);
-  const [allLists, setAllLists] = useState();
 
   const listComponents = {
     default: list => {
-      return <DefaultList list={list} listName={listName} />;
+      return (
+        <DefaultList
+          key={listName}
+          list={list}
+          listName={listName}
+          updateLists={updateLists}
+          addListItem={addListItem}
+          removeListItem={removeListItem}
+        />
+      );
     },
     movie: list => {
-      return <MoviesList list={list} listName={listName} />;
+      return (
+        <MoviesList
+          key={listName}
+          list={list}
+          listName={listName}
+          updateLists={updateLists}
+          addListItem={addListItem}
+          removeListItem={removeListItem}
+        />
+      );
     },
     serie: list => {
-      return <SeriesList list={list} listName={listName} />;
+      return (
+        <SeriesList
+          key={listName}
+          list={list}
+          listName={listName}
+          updateLists={updateLists}
+          addListItem={addListItem}
+          removeListItem={removeListItem}
+        />
+      );
     },
     freetext: list => {
-      return <FreeText list={list} listName={listName} allLists={allLists} />;
+      return <FreeText key={listName} list={list} listName={listName} updateLists={updateLists} />;
     },
   };
 
   const RenderListComp = () => {
-    return listComponents[allLists[listName].type || "default"](allLists[listName].items);
+    if (allLists) {
+      return listComponents[allLists[listName].type || "default"](allLists[listName].items);
+    } else {
+      return <Loading text={"Fetching data from server.."} fontSize={"1.5rem"} />;
+    }
+  };
+
+  const updateLists = (listName, sortedList) => {
+    const lists = { ...allLists };
+
+    lists[listName].items = sortedList;
+
+    setAllLists(lists);
+  };
+
+  const addListItem = async (listName, item, p_type) => {
+    const lists = { ...allLists };
+    lists[listName].items.push(item);
+
+    setAllLists(lists);
+
+    await axios
+      .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
+        username: "mambans",
+        listItems: { type: p_type, items: lists[listName].items },
+        listName: listName,
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  };
+
+  const removeListItem = async (listName, p_item, p_type) => {
+    const lists = { ...allLists };
+    const newList = lists[listName].items.filter(item => {
+      return (item.Title || item).toLowerCase() !== p_item.toLowerCase();
+    });
+    lists[listName].items = newList;
+
+    setAllLists(lists);
+
+    await axios
+      .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
+        username: "mambans",
+        listItems: { type: p_type, items: newList },
+        listName: listName,
+      })
+      .catch(e => {
+        console.log("TCL: e", e);
+      });
   };
 
   const fetchLists = async () => {
@@ -89,28 +165,6 @@ export default () => {
   const { value: item, bind: bindItem, reset: reseItem } = useInput("");
   const { value: type, bind: bindType, reset: reseType } = useInput("");
 
-  const handleSubmit = async event => {
-    event.preventDefault();
-
-    allLists[item] = { type: type || "default", items: [] };
-
-    setAllLists(allLists);
-    setListName(item);
-    reseItem();
-    reseType();
-    setShowAddInput(false);
-
-    await axios
-      .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-        username: "mambans",
-        listItems: { type: type || "default", items: type === "freetext" ? "''" : [] },
-        listName: item,
-      })
-      .catch(e => {
-        console.log("TCL: e", e);
-      });
-  };
-
   const deleteList = async p_list => {
     const confirm = window.confirm(`Delete ${p_list}`);
     if (confirm) {
@@ -135,6 +189,28 @@ export default () => {
           console.log("TCL: e", e);
         });
     }
+  };
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+
+    allLists[item] = { type: type || "default", items: [] };
+
+    setAllLists(allLists);
+    setListName(item);
+    reseItem();
+    reseType();
+    setShowAddInput(false);
+
+    await axios
+      .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
+        username: "mambans",
+        listItems: { type: type || "default", items: type === "freetext" ? "''" : [] },
+        listName: item,
+      })
+      .catch(e => {
+        console.log("TCL: e", e);
+      });
   };
 
   useEffect(() => {
@@ -174,7 +250,6 @@ export default () => {
                             setListName(name);
                           }}>
                           {name}
-                          {/* <Icon className='arrow' icon={ic_chevron_right} size={24}></Icon> */}
                         </div>
                       </StyledSidarbarItem>
                     </CSSTransition>
@@ -201,8 +276,6 @@ export default () => {
                   {...bindItem}
                   autoComplete='off'
                 />
-                {/* <input type='text' name='type' {...bindType} autoComplete='off' />
-                 */}
                 <Form.Label>Type</Form.Label>
                 <Form.Control as='select' {...bindType} size='sm'>
                   {Object.keys(listComponents).map(item => {
@@ -229,13 +302,7 @@ export default () => {
               }}></div>
           ) : null}
         </StyledSidebar>
-        <StyledRightListContainer height={950}>
-          {allLists ? (
-            <RenderListComp />
-          ) : (
-            <Loading text={"Fetching data from server.."} fontSize={"1.5rem"} />
-          )}
-        </StyledRightListContainer>
+        <StyledRightListContainer height={950}>{RenderListComp()}</StyledRightListContainer>
       </StyledMainContainer>
     </StyledCenterContainer>
   );

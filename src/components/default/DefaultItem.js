@@ -4,10 +4,7 @@ import { DeleteIcon, StyledSimpleListItem, MoveIcon } from "./../StyledComponent
 
 export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) => {
   return (
-    <StyledSimpleListItem
-      // key={item.Title}
-
-      title={item}>
+    <StyledSimpleListItem title={item}>
       <MoveIcon
         draggable
         onDragOver={e => onDragOver(e, idx)}

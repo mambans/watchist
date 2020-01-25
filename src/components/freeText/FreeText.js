@@ -2,16 +2,10 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 
-import {
-  StyledContainer,
-  StyledAlert,
-  StyledErrorPlaceholder,
-  StyledTextArea,
-} from "./../StyledComponents";
+import { StyledAlert, StyledErrorPlaceholder, StyledTextArea } from "./../StyledComponents";
 
-export default ({ list, listName }) => {
+export default ({ list, listName, updateLists }) => {
   const [alert, setAlert] = useState();
-  const [thisList, setThisList] = useState(list);
   const alertTimer = useRef();
 
   const useInput = initialValue => {
@@ -30,7 +24,7 @@ export default ({ list, listName }) => {
     };
   };
 
-  const { value: item, bind: bindItem } = useInput(thisList);
+  const { value: item, bind: bindItem } = useInput(list);
 
   const handleSubmit = evt => {
     evt.preventDefault();
@@ -41,13 +35,14 @@ export default ({ list, listName }) => {
   const addItem = async () => {
     if (item && item.trim()) {
       const text = item.trim();
-      setThisList(text);
+
+      updateLists(listName, text);
 
       setAlert({ Error: "Saved: ", type: "success" });
-
       alertTimer.current = setTimeout(() => {
         setAlert(null);
       }, 3000);
+
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
@@ -61,7 +56,7 @@ export default ({ list, listName }) => {
   };
 
   return (
-    <StyledContainer>
+    <>
       <h1>{listName}</h1>
       <Form onSubmit={handleSubmit} style={{ height: 950 - 68 }}>
         {alert ? (
@@ -80,6 +75,6 @@ export default ({ list, listName }) => {
         </Button>
         <StyledTextArea style={{ height: 950 - 68 - 40 - 37 - 20 }} {...bindItem}></StyledTextArea>
       </Form>
-    </StyledContainer>
+    </>
   );
 };

@@ -3,32 +3,30 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 
-import { sortFunctions, sortListFunc, SortButton } from "./../sort/Sort";
+import { sortFunctions, SortButton } from "./../sort/Sort";
 import {
-  StyledContainer,
   StyledAddForm,
   StyledList,
   StyledAlert,
   StyledErrorPlaceholder,
+  ScrollToTopIconSmaller,
+  StyledScollToTop,
 } from "./../StyledComponents";
 import DefaultItem from "./DefaultItem";
 
-export default ({ list, listName }) => {
-  const [thisList, setThisList] = useState(list);
+export default ({ list, listName, addListItem, removeListItem, updateLists }) => {
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAs, setSortAs] = useState(false);
   const postOrderTimer = useRef();
   const alertTimer = useRef();
-  const customOrder = useRef(thisList);
+  const customOrder = useRef(list);
+  const scrollToTop = useRef();
+  const topItemRef = useRef();
 
   const sortOptions = {
     Alphabetically: { name: "Alphabetically", func: sortFunctions.alphabetically },
-  };
-
-  const sortList = sortBy => {
-    sortListFunc(sortBy, thisList, sortOptions, setThisList);
   };
 
   const useInput = initialValue => {
@@ -57,54 +55,38 @@ export default ({ list, listName }) => {
 
   const addItem = async () => {
     if (item && item.trim()) {
-      if (thisList.find(listItem => listItem.toLowerCase() === item.trim().toLowerCase())) {
+      if (list.find(listItem => listItem.toLowerCase() === item.trim().toLowerCase())) {
         setAlert({ Response: "False", Error: "Item already added", type: "warning" });
       } else {
-        thisList.push(item.trim());
-        setThisList([...thisList]);
+        addListItem(listName, item.trim(), "default");
 
         setAlert({ Error: "Added: " + item, type: "success" });
         alertTimer.current = setTimeout(() => {
           setAlert(null);
         }, 3000);
 
-        reseItem();
-        await axios
-          .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-            username: "mambans",
-            listItems: { type: "default", items: thisList },
-            listName: listName,
-          })
-          .catch(e => {
-            console.log("TCL: e", e);
+        setTimeout(() => {
+          scrollToTop.current.scrollIntoView({
+            behavior: "smooth",
+            block: "end",
+            inline: "end",
           });
+        }, 0);
+
+        reseItem();
       }
     }
   };
 
   const removeItem = async p_item => {
     try {
-      const newList = thisList.filter(item => {
-        return item.toLowerCase() !== p_item.toLowerCase();
-      });
-
-      setThisList([...newList]);
+      removeListItem(listName, p_item, "default");
 
       clearTimeout(alertTimer.current);
       setAlert({ Error: "Removed: " + p_item, type: "warning" });
       alertTimer.current = setTimeout(() => {
         setAlert(null);
       }, 3000);
-
-      await axios
-        .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-          username: "mambans",
-          listItems: { type: "default", items: newList },
-          listName: listName,
-        })
-        .catch(e => {
-          console.log("TCL: e", e);
-        });
     } catch (error) {
       console.log("TCL: error", error);
     }
@@ -112,7 +94,7 @@ export default ({ list, listName }) => {
 
   const onDragStart = (e, index) => {
     clearTimeout(postOrderTimer.current);
-    setDragSelected(thisList[index]);
+    setDragSelected(list[index]);
     e.dataTransfer.effectAllowed = "move";
     e.target.parentNode.style.background = "rgb(80, 80, 80)";
     e.dataTransfer.setData("text/html", e.target.parentNode);
@@ -120,18 +102,18 @@ export default ({ list, listName }) => {
   };
 
   const onDragOver = (e, index) => {
-    const draggedOverItem = thisList[index];
+    const draggedOverItem = list[index];
 
     if (dragSelected === draggedOverItem) {
       return;
     }
 
     if (draggedOverItem) {
-      let items = thisList.filter(item => item !== dragSelected);
+      let items = list.filter(item => item !== dragSelected);
 
       items.splice(index, 0, dragSelected);
 
-      setThisList(items);
+      updateLists(listName, items);
     }
   };
 
@@ -143,7 +125,7 @@ export default ({ list, listName }) => {
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
-          listItems: { type: "default", items: thisList },
+          listItems: { type: "default", items: list },
           listName: listName,
         })
         .catch(e => {
@@ -153,7 +135,7 @@ export default ({ list, listName }) => {
   };
 
   return (
-    <StyledContainer>
+    <>
       <h1>{listName}</h1>
       <StyledAddForm onSubmit={handleSubmit}>
         {alert ? (
@@ -171,11 +153,12 @@ export default ({ list, listName }) => {
           text={sortAs}
           open={sortOpen}
           setSortOpen={setSortOpen}
-          customOrder={customOrder.current}
           sortOptions={sortOptions}
-          setList={setThisList}
+          customOrder={customOrder.current}
           setSortAs={setSortAs}
-          sortList={sortList}
+          updateLists={updateLists}
+          listName={listName}
+          list={list}
         />
         <Form.Group controlId='formGroupUserName'>
           {/* <Form.Label>Add movie</Form.Label> */}
@@ -187,8 +170,10 @@ export default ({ list, listName }) => {
       </StyledAddForm>
 
       <StyledList height={950}>
+        <div ref={topItemRef} style={{ height: "1px" }} />
+
         <TransitionGroup component={null}>
-          {thisList.map((item, idx) => {
+          {list.map((item, idx) => {
             return (
               <CSSTransition key={item} timeout={1000} classNames='fadeDown-small-1s' unmountOnExit>
                 <DefaultItem
@@ -203,7 +188,22 @@ export default ({ list, listName }) => {
             );
           })}
         </TransitionGroup>
+        <StyledScollToTop
+          height={35}
+          fontSize={"1rem"}
+          gridCol={"50px 120px auto"}
+          ref={scrollToTop}
+          onClick={() => {
+            topItemRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "end",
+              inline: "end",
+            });
+          }}>
+          <ScrollToTopIconSmaller size={30} />
+          <p>Scroll to top</p>
+        </StyledScollToTop>
       </StyledList>
-    </StyledContainer>
+    </>
   );
 };

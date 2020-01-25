@@ -60,17 +60,16 @@ const sortFunctions = {
   alphabetically: (a, b, prop) => {
     const aText = a.Title ? a.Title.toLowerCase() : a.toLowerCase();
     const bText = b.Title ? b.Title.toLowerCase() : b.toLowerCase();
-    // const bText = b.Title.toLowerCase() || b;
     return aText < bText ? -1 : aText > bText ? 1 : 0;
   },
 };
 
-const sortListFunc = (sortBy, list, sortOptions, setList) => {
+const sortListFunc = (sortBy, list, sortOptions, listName, updateLists) => {
   const SortedList = Object.values(list).sort((a, b) => {
     return sortOptions[sortBy].func(a, b, sortOptions[sortBy].name);
   });
 
-  setList(SortedList);
+  updateLists(listName, SortedList);
 };
 
 const StyledSortButton = styled(Button).attrs({ variant: "secondary" })`
@@ -125,9 +124,10 @@ const SortButton = ({
   setSortOpen,
   customOrder,
   sortOptions,
-  setList,
+  updateLists,
   setSortAs,
-  sortList,
+  listName,
+  list,
 }) => {
   return (
     <StyledSortButton
@@ -149,7 +149,7 @@ const SortButton = ({
           <li
             onClick={() => {
               setSortAs("Default");
-              setList(customOrder);
+              updateLists(listName, customOrder);
             }}>
             Default
           </li>
@@ -159,7 +159,7 @@ const SortButton = ({
                 key={key}
                 onClick={() => {
                   setSortAs(key);
-                  sortList(key);
+                  sortListFunc(key, list, sortOptions, listName, updateLists);
                 }}>
                 <Icon icon={sortIcons[key] || ic_sort}></Icon>
                 {key}
@@ -172,4 +172,4 @@ const SortButton = ({
   );
 };
 
-export { sortFunctions, sortListFunc, SortButton };
+export { sortFunctions, SortButton };

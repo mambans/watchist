@@ -3,10 +3,9 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 
-import { sortFunctions, sortListFunc, SortButton } from "./../sort/Sort";
+import { sortFunctions, SortButton } from "./../sort/Sort";
 import MovieItem from "./MovieItem";
 import {
-  StyledContainer,
   StyledAddForm,
   StyledList,
   StyledAlert,
@@ -18,10 +17,9 @@ import {
   StyledScollToTop,
 } from "./../StyledComponents";
 
-export default ({ list, listName }) => {
+export default ({ list, listName, addListItem, removeListItem, updateLists }) => {
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
-  const [thisList, setThisList] = useState(list);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortAs, setSortAs] = useState(false);
   const [suggestionsOpen, setSuggestionsOpen] = useState();
@@ -29,9 +27,9 @@ export default ({ list, listName }) => {
   const postOrderTimer = useRef();
   const alertTimer = useRef();
   const formInput = useRef();
-  const customOrder = useRef(thisList);
+  const customOrder = useRef(list);
   const previousSearch = useRef();
-  const newAddedRef = useRef();
+  const scrollToTop = useRef();
   const topItemRef = useRef();
 
   const sortOptions = {
@@ -42,10 +40,6 @@ export default ({ list, listName }) => {
     Year: { name: "Year", func: sortFunctions.first },
     Runtime: { name: "Runtime", func: sortFunctions.first },
     Boxoffice: { name: "BoxOffice", func: sortFunctions.first },
-  };
-
-  const sortList = sortBy => {
-    sortListFunc(sortBy, thisList, sortOptions, setThisList);
   };
 
   const useInput = initialValue => {
@@ -80,27 +74,13 @@ export default ({ list, listName }) => {
 
   const removeItem = async p_item => {
     try {
-      const newList = thisList.filter(item => {
-        return item.Title.toLowerCase() !== p_item.toLowerCase();
-      });
-
-      setThisList([...newList]);
+      removeListItem(listName, p_item, "movie");
 
       clearTimeout(alertTimer.current);
       setAlert({ Error: "Removed: " + p_item, type: "warning" });
       alertTimer.current = setTimeout(() => {
         setAlert(null);
       }, 3000);
-
-      await axios
-        .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-          username: "mambans",
-          listItems: { type: "movie", items: newList },
-          listName: listName,
-        })
-        .catch(e => {
-          console.log("TCL: e", e);
-        });
     } catch (error) {
       console.error(error);
     }
@@ -137,7 +117,7 @@ export default ({ list, listName }) => {
 
   const addItem = async () => {
     if (item && item.trim()) {
-      if (thisList.find(movie => movie.Title.toLowerCase() === item.trim().toLowerCase())) {
+      if (list.find(movie => movie.Title.toLowerCase() === item.trim().toLowerCase())) {
         setAlert({ Response: "False", Error: "Movie already added", type: "warning" });
       } else {
         const year = item.substring(item.lastIndexOf("(") + 1, item.lastIndexOf(")")) || null;
@@ -147,34 +127,25 @@ export default ({ list, listName }) => {
           }`
         );
         if (res.data.Response !== "False") {
-          thisList.push(res.data);
+          addListItem(listName, res.data, "movie");
 
-          setThisList([...thisList]);
+          clearTimeout(alertTimer.current);
+
+          setAlert({ Error: "Added: " + res.data.Title, type: "success" });
+
+          alertTimer.current = setTimeout(() => {
+            setAlert(null);
+          }, 3000);
 
           setTimeout(() => {
-            newAddedRef.current.scrollIntoView({
+            scrollToTop.current.scrollIntoView({
               behavior: "smooth",
               block: "end",
               inline: "end",
             });
           }, 0);
 
-          clearTimeout(alertTimer.current);
-          setAlert({ Error: "Added: " + res.data.Title, type: "success" });
-          alertTimer.current = setTimeout(() => {
-            setAlert(null);
-          }, 3000);
           reseItem();
-
-          await axios
-            .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-              username: "mambans",
-              listItems: { type: "movie", items: thisList },
-              listName: listName,
-            })
-            .catch(e => {
-              console.error(e);
-            });
         } else {
           setAlert({ ...res.data, type: "warning" });
           await axios
@@ -198,7 +169,7 @@ export default ({ list, listName }) => {
 
   const onDragStart = (e, index) => {
     clearTimeout(postOrderTimer.current);
-    setDragSelected(thisList[index]);
+    setDragSelected(list[index]);
     e.dataTransfer.effectAllowed = "move";
     e.target.parentNode.style.background = "rgb(80, 80, 80)";
     e.dataTransfer.setData("text/html", e.target.parentNode);
@@ -206,28 +177,27 @@ export default ({ list, listName }) => {
   };
 
   const onDragOver = (e, index) => {
-    const draggedOverItem = thisList[index];
+    const draggedOverItem = list[index];
 
     if (dragSelected.Title === draggedOverItem.Title) {
       return;
     }
 
-    let items = thisList.filter(item => item.Title !== dragSelected.Title);
+    let items = list.filter(item => item.Title !== dragSelected.Title);
 
     items.splice(index, 0, dragSelected);
 
-    setThisList(items);
+    updateLists(listName, items);
   };
 
   const onDragEnd = e => {
-    // e.target.parentNode.style.background = "rgb(24,24,24)";
     e.target.parentNode.style.background = "inherit";
 
     postOrderTimer.current = setTimeout(async () => {
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
           username: "mambans",
-          listItems: { type: "movie", items: thisList },
+          listItems: { type: "movie", items: list },
           listName: listName,
         })
         .catch(e => {
@@ -237,7 +207,7 @@ export default ({ list, listName }) => {
   };
 
   return (
-    <StyledContainer>
+    <>
       <h1>{listName}</h1>
       <StyledAddForm onSubmit={handleSubmit}>
         {alert ? (
@@ -255,14 +225,14 @@ export default ({ list, listName }) => {
           text={sortAs}
           open={sortOpen}
           setSortOpen={setSortOpen}
-          customOrder={customOrder.current}
           sortOptions={sortOptions}
-          setList={setThisList}
+          customOrder={customOrder.current}
           setSortAs={setSortAs}
-          sortList={sortList}
+          updateLists={updateLists}
+          listName={listName}
+          list={list}
         />
         <Form.Group controlId='formGroupUserName'>
-          {/* <Form.Label>Add movie</Form.Label> */}
           <Form.Control
             ref={formInput}
             type='text'
@@ -313,7 +283,7 @@ export default ({ list, listName }) => {
       <StyledList height={950}>
         <div ref={topItemRef} style={{ height: "1px" }} />
         <TransitionGroup component={null}>
-          {thisList.map((item, idx) => {
+          {list.map((item, idx) => {
             return (
               <CSSTransition key={item.Title} timeout={1000} classNames='fadeDown-1s' unmountOnExit>
                 <MovieItem
@@ -329,7 +299,7 @@ export default ({ list, listName }) => {
           })}
         </TransitionGroup>
         <StyledScollToTop
-          ref={newAddedRef}
+          ref={scrollToTop}
           onClick={() => {
             topItemRef.current.scrollIntoView({
               behavior: "smooth",
@@ -341,6 +311,6 @@ export default ({ list, listName }) => {
           <p>Scroll to top</p>
         </StyledScollToTop>
       </StyledList>
-    </StyledContainer>
+    </>
   );
 };

@@ -322,11 +322,14 @@ const ModalBackdrop = styled.div`
 
 const ScrollToTopIcon = styled(Icon).attrs({ icon: arrowUp, size: 70 })``;
 
+const ScrollToTopIconSmaller = styled(Icon).attrs({ icon: arrowUp, size: 30 })``;
+
 const StyledScollToTop = styled.div`
-  height: calc(5% + 150px);
+  height: ${props => props.height || 38 + 150}px;
+  /* height: calc(5% + 150px); */
   display: grid;
   grid-template-areas: "arrow gap text";
-  grid-template-columns: 109px 120px auto;
+  grid-template-columns: ${props => props.gridCol || "109px 120px auto"};
   cursor: pointer;
   color: #6d6d6d;
 
@@ -348,7 +351,7 @@ const StyledScollToTop = styled.div`
     justify-content: center;
     display: flex;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: ${props => props.fontSize};
   }
 `;
 
@@ -368,4 +371,6 @@ export {
   ModalBackdrop,
   ScrollToTopIcon,
   StyledScollToTop,
+  // StyledScollToTopSmaller,
+  ScrollToTopIconSmaller,
 };

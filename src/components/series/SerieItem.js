@@ -4,10 +4,7 @@ import { DeleteIcon, StyledListItem } from "./../StyledComponents";
 
 export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) => {
   return (
-    <StyledListItem
-      // key={item.Title}
-      title={item.Title}
-      onDragOver={e => onDragOver(e, idx)}>
+    <StyledListItem title={item.Title} onDragOver={e => onDragOver(e, idx)}>
       <img
         id='poster'
         src={item.Poster}

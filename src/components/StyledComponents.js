@@ -240,7 +240,8 @@ const StyledErrorPlaceholder = styled.p`
 `;
 
 const StyledAlert = styled(Alert)`
-  width: 50%;
+  /* width: 50%; */
+  width: 100%;
   justify-self: center;
   padding: 5px;
   text-align: center;

@@ -50,7 +50,7 @@ const StyledSimpleListItem = styled.li`
   height: 50px;
   align-items: center;
   display: flex;
-  padding: 10px;
+  /* padding: 10px; */
 `;
 
 const StyledListItem = styled.li`

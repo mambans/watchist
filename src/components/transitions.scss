@@ -1,24 +1,24 @@
 .fadeDown-1s-enter {
   opacity: 0;
-  top: -150px !important;
+  top: -165px !important;
   height: 0px !important;
   transition: opacity 1000ms, top 1000ms, height 500ms;
 }
 .fadeDown-1s-enter-active {
   opacity: 1;
   top: 0px !important;
-  height: 150px !important;
+  height: 165px !important;
   transition: opacity 1000ms, top 1000ms, height 500ms;
 }
 .fadeDown-1s-exit {
   opacity: 1;
   top: 0px !important;
-  height: 150px !important;
+  height: 165px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 .fadeDown-1s-exit-active {
   opacity: 0;
-  top: -150px !important;
+  top: -165px !important;
   height: 0px !important;
   transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
@@ -45,13 +45,6 @@
   opacity: 0;
   top: -50px !important;
   height: 0px !important;
-}
-
-.fadeDown-small-1s-exit-done {
-  opacity: 0;
-  top: -50px !important;
-  height: 0px !important;
-  transition: opacity 1000ms, top 1000ms, height 1000ms;
 }
 
 .slideDown-250ms-enter {

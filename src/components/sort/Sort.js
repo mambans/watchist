@@ -1,14 +1,14 @@
-import React from "react";
-import Icon from "react-icons-kit";
-import styled from "styled-components";
 import { Button } from "react-bootstrap";
-import { ic_attach_money } from "react-icons-kit/md/ic_attach_money";
-import { imdb } from "react-icons-kit/fa/imdb";
 import { calendar } from "react-icons-kit/icomoon/calendar";
 import { clockO } from "react-icons-kit/fa/clockO";
-import { ic_sort } from "react-icons-kit/md/ic_sort";
-import { sortAlphaAsc } from "react-icons-kit/fa/sortAlphaAsc";
 import { CSSTransition } from "react-transition-group";
+import { ic_attach_money } from "react-icons-kit/md/ic_attach_money";
+import { ic_sort } from "react-icons-kit/md/ic_sort";
+import { imdb } from "react-icons-kit/fa/imdb";
+import { sortAlphaAsc } from "react-icons-kit/fa/sortAlphaAsc";
+import Icon from "react-icons-kit";
+import React from "react";
+import styled from "styled-components";
 
 import { ModalBackdrop } from "./../StyledComponents";
 

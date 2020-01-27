@@ -1,26 +1,27 @@
 "use trict";
+import { Button, Form } from "react-bootstrap";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { ic_list } from "react-icons-kit/md/ic_list";
+import { ic_playlist_add } from "react-icons-kit/md/ic_playlist_add";
 import axios from "axios";
 import Icon from "react-icons-kit";
 import React, { useState, useEffect } from "react";
-import { ic_playlist_add } from "react-icons-kit/md/ic_playlist_add";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { Button, Form } from "react-bootstrap";
 
 import "./../transitions.scss";
+import DefaultList from "./../default/DefaultList";
+import FreeText from "./../freeText/FreeText";
 import Loading from "./Loading";
 import MoviesList from "./../movies/MoviesList";
 import SeriesList from "./../series/SeriesList";
-import DefaultList from "./../default/DefaultList";
-import FreeText from "./../freeText/FreeText";
+import useInput from "./../useInput";
 import {
-  StyledSidebar,
+  ListDeleteIcon,
   StyledCenterContainer,
   StyledMainContainer,
   StyledRightListContainer,
-  StyledSidarbarItem,
-  ListDeleteIcon,
   StyledSidarbarAddList,
+  StyledSidarbarItem,
+  StyledSidebar,
 } from "./StyledComponents";
 
 export default () => {
@@ -146,22 +147,6 @@ export default () => {
       });
   };
 
-  const useInput = initialValue => {
-    const [value, setValue] = useState(initialValue);
-
-    return {
-      value,
-      setValue,
-      reset: () => setValue(""),
-      bind: {
-        value,
-        onChange: event => {
-          setValue(event.target.value);
-        },
-      },
-    };
-  };
-
   const { value: item, bind: bindItem, reset: reseItem } = useInput("");
   const { value: type, bind: bindType, reset: reseType } = useInput("");
 
@@ -214,7 +199,7 @@ export default () => {
   };
 
   useEffect(() => {
-    // setAllLists(JSON.pars[RenderList]localStorage.getItem("allLists")));
+    // setAllLists(JSON.parse(localStorage.getItem("allLists")));
     fetchLists();
   }, []);
 

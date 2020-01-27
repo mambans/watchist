@@ -3,18 +3,20 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 
+import { onDragStart, onDragOver, onDragEnd } from "./../Drag";
 import { sortFunctions, SortButton } from "./../sort/Sort";
 import SerieItem from "./SerieItem";
+import useInput from "./../useInput";
 import {
-  StyledAddForm,
-  StyledList,
-  StyledAlert,
-  StyledErrorPlaceholder,
-  StyledSearchSuggestionList,
-  SearchIcon,
   ModalBackdrop,
   ScrollToTopIcon,
+  SearchIcon,
+  StyledAddForm,
+  StyledAlert,
+  StyledErrorPlaceholder,
+  StyledList,
   StyledScollToTop,
+  StyledSearchSuggestionList,
 } from "./../StyledComponents";
 
 export default ({ list, listName, addListItem, removeListItem, updateLists }) => {
@@ -41,29 +43,10 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
     Runtime: { name: "Runtime", func: sortFunctions.first },
   };
 
-  const useInput = initialValue => {
-    const [value, setValue] = useState(initialValue);
-
-    return {
-      value,
-      setValue,
-      reset: () => setValue(""),
-      manualSet: {
-        onClick: event => {
-          setValue(event.target.textContent);
-          setSuggestionsOpen(false);
-        },
-      },
-      bind: {
-        value,
-        onChange: event => {
-          setValue(event.target.value);
-        },
-      },
-    };
-  };
-
-  const { value: item, bind: bindItem, reset: reseItem, manualSet } = useInput("");
+  const { value: item, bind: bindItem, reset: reseItem, manualSet } = useInput(
+    "",
+    setSuggestionsOpen
+  );
 
   const handleSubmit = evt => {
     evt.preventDefault();
@@ -167,45 +150,6 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
     }
   };
 
-  const onDragStart = (e, index) => {
-    clearTimeout(postOrderTimer.current);
-    setDragSelected(list[index]);
-    e.dataTransfer.effectAllowed = "move";
-    e.target.parentNode.style.background = "rgb(80, 80, 80)";
-    e.dataTransfer.setData("text/html", e.target.parentNode);
-    e.dataTransfer.setDragImage(e.target.parentNode, 49, 75);
-  };
-
-  const onDragOver = (e, index) => {
-    const draggedOverItem = list[index];
-
-    if (dragSelected.Title === draggedOverItem.Title) {
-      return;
-    }
-
-    let items = list.filter(item => item.Title !== dragSelected.Title);
-
-    items.splice(index, 0, dragSelected);
-
-    updateLists(listName, items);
-  };
-
-  const onDragEnd = e => {
-    e.target.parentNode.style.background = "inherit";
-
-    postOrderTimer.current = setTimeout(async () => {
-      await axios
-        .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-          username: "mambans",
-          listItems: { type: "serie", items: list },
-          listName: listName,
-        })
-        .catch(e => {
-          console.error(e);
-        });
-    }, 5000);
-  };
-
   return (
     <>
       <h1>{listName}</h1>
@@ -290,9 +234,15 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
                   item={item}
                   removeItem={removeItem}
                   idx={idx}
-                  onDragStart={onDragStart}
-                  onDragOver={onDragOver}
-                  onDragEnd={onDragEnd}
+                  onDragStart={(e, index) => {
+                    onDragStart(e, index, postOrderTimer, setDragSelected, list, "serie");
+                  }}
+                  onDragOver={(e, index) => {
+                    onDragOver(index, list, dragSelected, updateLists, listName, "serie");
+                  }}
+                  onDragEnd={e => {
+                    onDragEnd(e, postOrderTimer, list, listName, "serie");
+                  }}
                 />
               </CSSTransition>
             );

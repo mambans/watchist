@@ -3,26 +3,11 @@ import axios from "axios";
 import React, { useState, useRef } from "react";
 
 import { StyledAlert, StyledErrorPlaceholder, StyledTextArea } from "./../StyledComponents";
+import useInput from "./../useInput";
 
 export default ({ list, listName, updateLists }) => {
   const [alert, setAlert] = useState();
   const alertTimer = useRef();
-
-  const useInput = initialValue => {
-    const [value, setValue] = useState(initialValue);
-
-    return {
-      value,
-      setValue,
-      reset: () => setValue(""),
-      bind: {
-        value,
-        onChange: event => {
-          setValue(event.target.value);
-        },
-      },
-    };
-  };
 
   const { value: item, bind: bindItem } = useInput(list);
 
@@ -38,7 +23,7 @@ export default ({ list, listName, updateLists }) => {
 
       updateLists(listName, text);
 
-      setAlert({ Error: "Saved: ", type: "success" });
+      setAlert({ Error: "Saved", type: "success" });
       alertTimer.current = setTimeout(() => {
         setAlert(null);
       }, 3000);
@@ -54,7 +39,6 @@ export default ({ list, listName, updateLists }) => {
         });
     }
   };
-
   return (
     <>
       <h1>{listName}</h1>

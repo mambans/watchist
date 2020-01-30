@@ -112,7 +112,7 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
         </Button>
       </StyledAddForm>
 
-      <StyledList height={950}>
+      <StyledList height={"95%"}>
         <div ref={topItemRef} style={{ height: "1px" }} />
 
         <TransitionGroup component={null}>

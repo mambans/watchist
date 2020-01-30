@@ -22,6 +22,7 @@ import {
   StyledSidarbarAddList,
   StyledSidarbarItem,
   StyledSidebar,
+  StyledSidarbarAddListBackdrop,
 } from "./StyledComponents";
 
 export default () => {
@@ -205,11 +206,11 @@ export default () => {
 
   return (
     <StyledCenterContainer>
-      <StyledMainContainer height={950} width={1200}>
+      <StyledMainContainer height={"95%"} width={1300}>
         <div id='logo'>
           <img src={`${process.env.PUBLIC_URL}/logo.png`} alt='' />
         </div>
-        <StyledSidebar height={950}>
+        <StyledSidebar height={"95%"}>
           <p id='sidebarHeader'>
             <Icon icon={ic_list} size={20}></Icon>Lists
           </p>
@@ -261,7 +262,7 @@ export default () => {
                   {...bindItem}
                   autoComplete='off'
                 />
-                <Form.Label>Type</Form.Label>
+                <Form.Label> </Form.Label>
                 <Form.Control as='select' {...bindType} size='sm'>
                   {Object.keys(listComponents).map(item => {
                     return (
@@ -278,16 +279,15 @@ export default () => {
             ) : null}
           </StyledSidarbarAddList>
           {showAddInput ? (
-            <div
+            <StyledSidarbarAddListBackdrop
+              nrLists={Object.keys(allLists).length * 50 + 240}
               onClick={() => {
                 setShowAddInput(false);
               }}
-              style={{
-                height: `${950 - (+270 + 110 + 50 * Object.keys(allLists).length)}px`,
-              }}></div>
+            />
           ) : null}
         </StyledSidebar>
-        <StyledRightListContainer height={950}>{RenderListComp()}</StyledRightListContainer>
+        <StyledRightListContainer height={"95%"}>{RenderListComp()}</StyledRightListContainer>
       </StyledMainContainer>
     </StyledCenterContainer>
   );

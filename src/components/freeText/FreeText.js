@@ -1,8 +1,13 @@
-import { Form, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 import React, { useState, useRef } from "react";
 
-import { StyledAlert, StyledErrorPlaceholder, StyledTextArea } from "./../StyledComponents";
+import {
+  StyledAlert,
+  StyledErrorPlaceholder,
+  StyledTextArea,
+  StyledFreeTextForm,
+} from "./../StyledComponents";
 import useInput from "./../useInput";
 
 export default ({ list, listName, updateLists }) => {
@@ -42,7 +47,7 @@ export default ({ list, listName, updateLists }) => {
   return (
     <>
       <h1>{listName}</h1>
-      <Form onSubmit={handleSubmit} style={{ height: 950 - 68 }}>
+      <StyledFreeTextForm onSubmit={handleSubmit}>
         {alert ? (
           <StyledAlert
             onClose={() => setAlert(false)}
@@ -57,8 +62,8 @@ export default ({ list, listName, updateLists }) => {
         <Button value='Submit' id='submit' type='submit'>
           Save
         </Button>
-        <StyledTextArea style={{ height: 950 - 68 - 40 - 37 - 20 }} {...bindItem}></StyledTextArea>
-      </Form>
+        <StyledTextArea {...bindItem}></StyledTextArea>
+      </StyledFreeTextForm>
     </>
   );
 };

@@ -224,7 +224,7 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
         ) : null}
       </StyledAddForm>
 
-      <StyledList height={950}>
+      <StyledList>
         <div ref={topItemRef} style={{ height: "1px" }}></div>
         <TransitionGroup component={null}>
           {list.map((item, idx) => {

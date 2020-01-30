@@ -212,7 +212,6 @@ const StyledAddForm = styled(Form)`
 const StyledList = styled.ul`
   padding: 0;
   overflow-y: scroll;
-  max-height: calc(100vh - 165px);
   margin: 0;
   scrollbar-color: rgb(33, 53, 66) rgb(5, 8, 10) !important;
   scrollbar-width: thin !important;
@@ -221,12 +220,15 @@ const StyledList = styled.ul`
   list-style: none;
   scrollbar-color: rgb(54, 54, 54) rgb(24, 24, 24) !important;
   scrollbar-width: thin !important;
-  height: ${props => props.height - 172 || 800 - 165}px;
+  /* height: ${props => props.height - 172 || "635px"}; */
+  /* height: ${props => props.height || "635px"};
+   */
+  height: calc(100% - 168px);
   padding-left: 0;
 
-  @media screen and (max-width: 1920px) {
+  /* @media screen and (max-width: 1920px) {
     max-height: calc((100vh - 13%) - 168px);
-  }
+  } */
 
   li {
     box-shadow: 0px 2px 0px #ffffff70;
@@ -263,6 +265,10 @@ const StyledAlert = styled(Alert)`
   }
 `;
 
+const StyledFreeTextForm = styled(Form)`
+  height: calc(100% - 68px);
+`;
+
 const StyledTextArea = styled.textarea`
   margin-top: 10px;
   overflow-y: auto;
@@ -277,6 +283,8 @@ const StyledTextArea = styled.textarea`
   height: 100%;
   scrollbar-color: rgb(33, 53, 66) rgb(5, 8, 10) !important;
   scrollbar-width: thin !important;
+  /* height: calc(95% - 68px - 40px - 37px - 20px); */
+  height: calc(100% - 100px);
 `;
 
 const StyledSearchSuggestionList = styled.ul`
@@ -374,4 +382,5 @@ export {
   StyledScollToTop,
   // StyledScollToTopSmaller,
   ScrollToTopIconSmaller,
+  StyledFreeTextForm,
 };

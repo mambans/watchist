@@ -52,11 +52,14 @@ const StyledSidebar = styled.ul`
   box-shadow: 2px 0px 4px #64646452;
   grid-area: sidebar;
   margin: 0;
-  height: ${props => props.height - 110}px;
+  /* height: calc(${props => props.height} - 110px); */
+  /* height: calc(100% - 110px); */
 
-  @media screen and (max-width: 1920px) {
+  height: 100%;
+
+  /* @media screen and (max-width: 1920px) {
     max-height: 81%;
-  }
+  } */
 
   #sidebarHeader {
     font-weight: bold;
@@ -73,6 +76,11 @@ const StyledSidebar = styled.ul`
       padding-right: 5px;
     }
   }
+`;
+
+const StyledSidarbarAddListBackdrop = styled.div`
+  height: calc(100% - ${props => props.nrLists}px);
+  /* height: ${props => 95 % -props.nrLists}px; */
 `;
 
 const StyledSidarbarAddList = styled.li`
@@ -189,8 +197,8 @@ const StyledSidarbarItem = styled.li`
 
 const StyledMainContainer = styled.div`
   background: rgb(24, 24, 24);
-  width: ${props => props.width || 1000}px;
-  height: ${props => props.height || 800}px;
+  width: ${props => props.width || 1200}px;
+  height: ${props => props.height || "800px"};
   border-radius: 10px;
   display: grid;
   /* grid-template-areas: "sidebar list";
@@ -198,17 +206,17 @@ const StyledMainContainer = styled.div`
   padding-right: 10px; */
 
   grid-template-areas: "logo list" "sidebar list";
-  grid-template-columns: 200px auto;
+  grid-template-columns: 250px auto;
   grid-template-rows: calc(68px + 42px) auto;
   padding-right: 10px;
-  max-height: calc(88%);
+  /* max-height: calc(88%); */
 
-  top: 7%;
-  position: absolute;
+  /* top: 7%;
+  position: absolute; */
 
-  @media screen and (max-width: 1920px) {
+  /* @media screen and (max-width: 1920px) {
     top: 5%;
-  }
+  } */
 
   #logo {
     grid-area: logo;
@@ -227,7 +235,8 @@ const StyledMainContainer = styled.div`
 `;
 
 const StyledRightListContainer = styled.div`
-  height: ${props => props.height || 800 - 10}px;
+  /* height: ${props => props.height || 800 - 10 + "px"}; */
+  height: 100%;
   overflow: hidden;
   /* transition: all 1s; */
   grid-area: list;
@@ -242,9 +251,9 @@ const StyledRightListContainer = styled.div`
     padding: 10px;
   }
 
-  @media screen and (max-width: 1920px) {
+  /* @media screen and (max-width: 1920px) {
     max-height: calc(100vh - 13%);
-  }
+  } */
 `;
 
 export {
@@ -256,4 +265,5 @@ export {
   ListDeleteIcon,
   StyledSidarbarAddList,
   StyledLoadingContainer,
+  StyledSidarbarAddListBackdrop,
 };

@@ -3,6 +3,8 @@
 # dependencies
 /node_modules
 node_modules
+frontend/node_modules
+backend/node_modules
 /.pnp
 .pnp.js
 
@@ -10,7 +12,7 @@ node_modules
 /coverage
 
 # production
-/build
+frontend/build
 
 # misc
 .DS_Store
@@ -24,3 +26,4 @@ yarn-debug.log*
 yarn-error.log*
 
 .env
+*-workspace

@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import { ic_delete } from "react-icons-kit/md/ic_delete";
 import Icon from "react-icons-kit";
+import { Form } from "react-bootstrap";
 
 const ListDeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 18 })`
   color: darkred;
   cursor: pointer;
   position: absolute;
-  left: 0;
+  /* left: 0; */
   opacity: 0;
   z-index: 10;
   margin-left: 3px;
@@ -61,13 +62,62 @@ const StyledSidebar = styled.ul`
     max-height: 81%;
   } */
 
-  #sidebarHeader {
+  #sidebarUsername {
     font-weight: bold;
     /* border-bottom: 2px solid black; */
     height: calc(1.5em + 0.75rem + 2px);
-    padding: 0.375rem 0.75rem;
+    /* padding: 0.375rem 0.75rem; */
     margin-bottom: 0;
     font-size: 1.1rem;
+    /* box-shadow: 0px 2px 3px black; */
+    /* box-shadow: 1px 1px 1px #ffffff70; */
+    border-bottom: 1px solid #6b6b6b70;
+    background-image: linear-gradient(141deg, rgb(46, 62, 55) 0%, rgb(24, 91, 98) 51%, rgb(15, 71, 92) 75%);
+    display: grid;
+    grid-template-areas: "logout name padding";
+    grid-template-columns: 10% auto 10%;
+    align-items: center;
+
+    &:hover {
+      i#logout {
+        opacity: 1;
+
+      }
+    }
+
+    p {
+      grid-area: "name";
+      margin: 0;
+    }
+
+    i {
+      padding-right: 5px;
+      color: white;
+    }
+
+    i#logout {
+      color: grey;
+      cursor: pointer;
+      /* position: absolute; */
+      opacity: 0.25;
+      z-index: 10;
+      margin-left: 3px;
+      -webkit-transition: all 300ms;
+      transition: all 300ms;
+      grid-area: "logout";
+
+      &:hover {
+        color: white;
+      }
+    }
+  }
+  #sidebarHeader {
+    /* font-weight: bold; */
+    /* border-bottom: 2px solid black; */
+    /* height: calc(1.5em + 0.75rem + 2px);  */
+    /* padding: 0.375rem 0.75rem;  */
+    margin-bottom: 0;
+    font-size: 0.9rem;
     /* box-shadow: 0px 2px 3px black; */
     /* box-shadow: 1px 1px 1px #ffffff70; */
     border-bottom: 1px solid #6b6b6b70;
@@ -256,6 +306,44 @@ const StyledRightListContainer = styled.div`
   } */
 `;
 
+const StyledForm = styled(Form)`
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  flex-flow: column;
+  height: 150px;
+
+  div {
+    text-align: center;
+    height: 100%;
+    width: 50%;
+    margin: auto;
+    margin-top: 110px;
+  }
+
+  label {
+    color: white;
+  }
+
+  input {
+    margin: 5px 0 10px 0;
+  }
+`;
+
+const NoListsAlert = styled.div`
+  height: 202px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border: 2px solid #c98a18;
+
+  h1 {
+    font-size: 3.5rem;
+    border: 2px solid;
+    color: #c98a18;
+  }
+`;
+
 export {
   StyledSidebar,
   StyledCenterContainer,
@@ -266,4 +354,6 @@ export {
   StyledSidarbarAddList,
   StyledLoadingContainer,
   StyledSidarbarAddListBackdrop,
+  StyledForm,
+  NoListsAlert,
 };

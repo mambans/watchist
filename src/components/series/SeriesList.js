@@ -1,7 +1,7 @@
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 
 import { onDragStart, onDragOver, onDragEnd } from "./../Drag";
 import { sortFunctions, SortButton } from "./../sort/Sort";
@@ -18,8 +18,10 @@ import {
   StyledScollToTop,
   StyledSearchSuggestionList,
 } from "./../StyledComponents";
+import UserContext from "../home/UserContext";
 
 export default ({ list, listName, addListItem, removeListItem, updateLists }) => {
+  const { username } = useContext(UserContext);
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
   const [suggestionsOpen, setSuggestionsOpen] = useState();
@@ -150,6 +152,17 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
     }
   };
 
+  // useEffect(() => {
+  //   const pushListTimer = postOrderTimer.current;
+  //   return () => {
+  //     if (pushListTimer) {
+  //       window.onbeforeunload = function() {
+  //         return "";
+  //       };
+  //     }
+  //   };
+  // }, []);
+
   return (
     <>
       <h1>{listName}</h1>
@@ -241,7 +254,7 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
                     onDragOver(index, list, dragSelected, updateLists, listName, "serie");
                   }}
                   onDragEnd={e => {
-                    onDragEnd(e, postOrderTimer, list, listName, "serie");
+                    onDragEnd(e, username, postOrderTimer, list, listName, "serie");
                   }}
                 />
               </CSSTransition>

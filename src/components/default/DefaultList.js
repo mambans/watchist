@@ -1,6 +1,6 @@
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Form, Button } from "react-bootstrap";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 
 import { onDragStart, onDragOver, onDragEnd } from "./../Drag";
 import { sortFunctions, SortButton } from "./../sort/Sort";
@@ -14,8 +14,10 @@ import {
   StyledList,
   StyledScollToTop,
 } from "./../StyledComponents";
+import UserContext from "../home/UserContext";
 
 export default ({ list, listName, addListItem, removeListItem, updateLists }) => {
+  const { username } = useContext(UserContext);
   const [alert, setAlert] = useState();
   const [dragSelected, setDragSelected] = useState();
   const [sortOpen, setSortOpen] = useState(false);
@@ -130,7 +132,7 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
                     onDragOver(index, list, dragSelected, updateLists, listName, "default");
                   }}
                   onDragEnd={e => {
-                    onDragEnd(e, postOrderTimer, list, listName, "default");
+                    onDragEnd(e, username, postOrderTimer, list, listName, "default");
                   }}
                 />
               </CSSTransition>

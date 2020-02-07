@@ -1,11 +1,12 @@
 "use trict";
 import { Button, Form } from "react-bootstrap";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { ic_list } from "react-icons-kit/md/ic_list";
+// import { ic_list } from "react-icons-kit/md/ic_list";
 import { ic_playlist_add } from "react-icons-kit/md/ic_playlist_add";
 import axios from "axios";
 import Icon from "react-icons-kit";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { logout } from "react-icons-kit/iconic/logout";
 
 import "./../transitions.scss";
 import DefaultList from "./../default/DefaultList";
@@ -23,12 +24,17 @@ import {
   StyledSidarbarItem,
   StyledSidebar,
   StyledSidarbarAddListBackdrop,
+  StyledForm,
+  NoListsAlert,
 } from "./StyledComponents";
+import UserContext from "./UserContext";
 
 export default () => {
   document.title = "Watchist | Lists";
+  const { username, setUsername } = useContext(UserContext);
+  const [validated, setValidated] = useState(false);
   const [allLists, setAllLists] = useState();
-  const [listName, setListName] = useState("Movies");
+  const [listName, setListName] = useState();
   const [showAddInput, setShowAddInput] = useState(false);
 
   const listComponents = {
@@ -74,10 +80,16 @@ export default () => {
   };
 
   const RenderListComp = () => {
-    if (allLists) {
+    if (allLists && Object.keys(allLists).length > 0 && listName) {
       return listComponents[allLists[listName].type || "default"](allLists[listName].items);
-    } else {
+    } else if (!allLists) {
       return <Loading text={"Fetching data from server.."} fontSize={"1.5rem"} />;
+    } else {
+      return (
+        <NoListsAlert>
+          <h1>No lists</h1>
+        </NoListsAlert>
+      );
     }
   };
 
@@ -97,7 +109,7 @@ export default () => {
 
     await axios
       .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-        username: "mambans",
+        username: username,
         listItems: { type: p_type, items: lists[listName].items },
         listName: listName,
       })
@@ -117,34 +129,12 @@ export default () => {
 
     await axios
       .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-        username: "mambans",
+        username: username,
         listItems: { type: p_type, items: newList },
         listName: listName,
       })
       .catch(e => {
         console.log("TCL: e", e);
-      });
-  };
-
-  const fetchLists = async () => {
-    await axios
-      .get(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list`, {
-        params: {
-          username: "mambans",
-        },
-      })
-      .then(res => {
-        const lists = res.data.Items[0];
-        delete lists.Username;
-        setAllLists(lists);
-
-        localStorage.setItem("allLists", JSON.stringify(lists));
-      })
-      .catch(e => {
-        console.error(e);
-        if (localStorage.getItem("allLists")) {
-          setAllLists(JSON.parse(localStorage.getItem("allLists")));
-        }
       });
   };
 
@@ -168,13 +158,32 @@ export default () => {
 
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/remove`, {
-          username: "mambans",
+          username: username,
           listName: p_list,
         })
         .catch(e => {
           console.log("TCL: e", e);
         });
     }
+  };
+
+  const handleLogin = event => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    setValidated(true);
+    setUsername(form["0"].value);
+    document.cookie = `Watchist-Username=${form["0"].value}; path=/`;
+  };
+
+  const handleLogout = event => {
+    setUsername(false);
+    setAllLists(null);
+    document.cookie = `Watchist-Username=null; path=/`;
+    console.log("Logging out.");
   };
 
   const handleSubmit = async event => {
@@ -190,7 +199,7 @@ export default () => {
 
     await axios
       .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-        username: "mambans",
+        username: username,
         listItems: { type: type || "default", items: type === "freetext" ? "''" : [] },
         listName: item,
       })
@@ -201,94 +210,152 @@ export default () => {
 
   useEffect(() => {
     // setAllLists(JSON.parse(localStorage.getItem("allLists")));
-    fetchLists();
-  }, []);
+    const fetchLists = async () => {
+      await axios
+        .get(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list`, {
+          params: {
+            username: username,
+          },
+        })
+        .then(async res => {
+          try {
+            console.log("TCL: fetchLists -> res", res);
+            const lists = res.data.Items[0];
+
+            delete lists.Username;
+            setAllLists(lists);
+            setListName(Object.keys(lists)[0]);
+
+            localStorage.setItem("allLists", JSON.stringify(lists));
+          } catch (error) {
+            console.log("TCL: fetchLists -> error", error.message);
+            if (error.message === `can't access property "Username", lists is undefined`) {
+              setAllLists([]);
+            }
+          }
+        })
+        .catch(e => {
+          console.log("Error fetching lists.");
+          console.error(e);
+          // if (localStorage.getItem("allLists")) {
+          //   setAllLists(JSON.parse(localStorage.getItem("allLists")));
+          // }
+        });
+    };
+    if (username) fetchLists();
+  }, [username]);
 
   return (
-    <StyledCenterContainer>
-      <StyledMainContainer height={"95%"} width={1300}>
-        <div id='logo'>
-          <img src={`${process.env.PUBLIC_URL}/logo.png`} alt='' />
-        </div>
-        <StyledSidebar height={"95%"}>
-          <p id='sidebarHeader'>
-            <Icon icon={ic_list} size={20}></Icon>Lists
-          </p>
-          <TransitionGroup component={null}>
-            {allLists
-              ? Object.keys(allLists).map(name => {
-                  return (
-                    <CSSTransition
-                      key={name}
-                      timeout={1000}
-                      classNames='fadeDown-small-1s'
-                      unmountOnExit>
-                      <StyledSidarbarItem active={listName === name} key={name}>
-                        <ListDeleteIcon
-                          className='delete'
-                          onClick={() => {
-                            deleteList(name);
-                          }}
-                        />
-                        <div
-                          id='button'
-                          onClick={() => {
-                            setListName(name);
-                          }}>
-                          {name}
-                        </div>
-                      </StyledSidarbarItem>
-                    </CSSTransition>
-                  );
-                })
-              : null}
-          </TransitionGroup>
-
-          <StyledSidarbarAddList key={"add new list"}>
-            <button
-              id='toggleAdd'
-              onClick={() => {
-                setShowAddInput(!showAddInput);
-              }}>
-              Add list
-              <Icon icon={ic_playlist_add} size={24}></Icon>
-            </button>
-            {showAddInput ? (
-              <Form onSubmit={handleSubmit}>
-                <Form.Control
-                  type='text'
-                  name='name'
-                  placeholder='List name..'
-                  {...bindItem}
-                  autoComplete='off'
-                />
-                <Form.Label> </Form.Label>
-                <Form.Control as='select' {...bindType} size='sm'>
-                  {Object.keys(listComponents).map(item => {
+    <>
+      <StyledCenterContainer>
+        <StyledMainContainer height={"95%"} width={1300}>
+          <div id='logo'>
+            <img src={`${process.env.PUBLIC_URL}/logo.png`} alt='' />
+          </div>
+          <StyledSidebar height={"95%"}>
+            <div id='sidebarUsername'>
+              <Icon
+                id='logout'
+                icon={logout}
+                size={20}
+                title='Logout'
+                onClick={handleLogout}></Icon>
+              {/* <Icon icon={ic_list} size={20}></Icon> */}
+              <p>{username || null}</p>
+            </div>
+            {/* <p id='sidebarHeader'>
+              <Icon icon={ic_list} size={20}></Icon>Lists
+            </p> */}
+            <TransitionGroup component={null}>
+              {username && allLists
+                ? Object.keys(allLists).map(name => {
                     return (
-                      <option key={item} value={item}>
-                        {item.charAt(0).toUpperCase() + item.slice(1)}
-                      </option>
+                      <CSSTransition
+                        key={name}
+                        timeout={1000}
+                        classNames='fadeDown-small-1s'
+                        unmountOnExit>
+                        <StyledSidarbarItem active={listName === name} key={name}>
+                          <ListDeleteIcon
+                            className='delete'
+                            onClick={() => {
+                              deleteList(name);
+                            }}
+                          />
+                          <div
+                            id='button'
+                            onClick={() => {
+                              setListName(name);
+                            }}>
+                            {name}
+                          </div>
+                        </StyledSidarbarItem>
+                      </CSSTransition>
                     );
-                  })}
-                </Form.Control>
-                <Button type='submit' value='Submit' id='submit'>
-                  Add
-                </Button>
-              </Form>
+                  })
+                : null}
+            </TransitionGroup>
+            {username ? (
+              <StyledSidarbarAddList key={"add new list"}>
+                <button
+                  id='toggleAdd'
+                  onClick={() => {
+                    setShowAddInput(!showAddInput);
+                  }}>
+                  Add list
+                  <Icon icon={ic_playlist_add} size={24}></Icon>
+                </button>
+                {showAddInput ? (
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Control
+                      type='text'
+                      name='name'
+                      placeholder='List name..'
+                      {...bindItem}
+                      autoComplete='off'
+                    />
+                    <Form.Label> </Form.Label>
+                    <Form.Control as='select' {...bindType} size='sm'>
+                      {Object.keys(listComponents).map(item => {
+                        return (
+                          <option key={item} value={item}>
+                            {item.charAt(0).toUpperCase() + item.slice(1)}
+                          </option>
+                        );
+                      })}
+                    </Form.Control>
+                    <Button type='submit' value='Submit' id='submit'>
+                      Add
+                    </Button>
+                  </Form>
+                ) : null}
+              </StyledSidarbarAddList>
             ) : null}
-          </StyledSidarbarAddList>
-          {showAddInput ? (
-            <StyledSidarbarAddListBackdrop
-              nrLists={Object.keys(allLists).length * 50 + 240}
-              onClick={() => {
-                setShowAddInput(false);
-              }}
-            />
-          ) : null}
-        </StyledSidebar>
-        <StyledRightListContainer height={"95%"}>{RenderListComp()}</StyledRightListContainer>
-      </StyledMainContainer>
-    </StyledCenterContainer>
+            {showAddInput ? (
+              <StyledSidarbarAddListBackdrop
+                nrLists={Object.keys(allLists).length * 50 + 240}
+                onClick={() => {
+                  setShowAddInput(false);
+                }}
+              />
+            ) : null}
+          </StyledSidebar>
+          {!username ? (
+            <StyledForm onSubmit={handleLogin} ovalidate='true' validated={validated}>
+              <Form.Group controlId='formGroupUserName' required>
+                <Form.Label>Username</Form.Label>
+                <Form.Text className='text-muted'>
+                  Username to fetch the lists from or create new user if username doesn't exist.
+                </Form.Text>
+                <Form.Control type='text' placeholder='Username' />
+                <Button type='submit'>Login</Button>
+              </Form.Group>
+            </StyledForm>
+          ) : (
+            <StyledRightListContainer height={"95%"}>{RenderListComp()}</StyledRightListContainer>
+          )}
+        </StyledMainContainer>
+      </StyledCenterContainer>
+    </>
   );
 };

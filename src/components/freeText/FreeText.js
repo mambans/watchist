@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
 import axios from "axios";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 
 import {
   StyledAlert,
@@ -9,8 +9,10 @@ import {
   StyledFreeTextForm,
 } from "./../StyledComponents";
 import useInput from "./../useInput";
+import UserContext from "../home/UserContext";
 
 export default ({ list, listName, updateLists }) => {
+  const { username } = useContext(UserContext);
   const [alert, setAlert] = useState();
   const alertTimer = useRef();
 
@@ -35,7 +37,7 @@ export default ({ list, listName, updateLists }) => {
 
       await axios
         .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-          username: "mambans",
+          username: username,
           listItems: { type: "freetext", items: text },
           listName: listName,
         })

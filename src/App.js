@@ -3,9 +3,14 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Home from "./components/home/Home";
+import UserProvider from "./components/home/UserProvider";
 
 function App() {
-  return <Home></Home>;
+  return (
+    <UserProvider>
+      <Home></Home>
+    </UserProvider>
+  );
 }
 
 export default App;

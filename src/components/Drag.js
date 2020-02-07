@@ -1,4 +1,5 @@
 import axios from "axios";
+// import { getCookie } from "../utilities/Utilities";
 
 const onDragStart = (e, index, postOrderTimer, setDragSelected, list, type) => {
   clearTimeout(postOrderTimer.current);
@@ -37,13 +38,13 @@ const onDragOver = (index, list, dragSelected, updateLists, listName, type) => {
   }
 };
 
-const onDragEnd = (e, postOrderTimer, list, listName, type) => {
+const onDragEnd = (e, username, postOrderTimer, list, listName, type) => {
   e.target.parentNode.style.background = "inherit";
 
   postOrderTimer.current = setTimeout(async () => {
     await axios
       .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-        username: "mambans",
+        username: username,
         listItems: { type: type, items: list },
         listName: listName,
       })

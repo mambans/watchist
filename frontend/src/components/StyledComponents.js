@@ -220,15 +220,8 @@ const StyledList = styled.ul`
   list-style: none;
   scrollbar-color: rgb(54, 54, 54) rgb(24, 24, 24) !important;
   scrollbar-width: thin !important;
-  /* height: ${props => props.height - 172 || "635px"}; */
-  /* height: ${props => props.height || "635px"};
-   */
   height: calc(100% - 168px);
   padding-left: 0;
-
-  /* @media screen and (max-width: 1920px) {
-    max-height: calc((100vh - 13%) - 168px);
-  } */
 
   li {
     box-shadow: 0px 2px 0px #ffffff70;
@@ -288,7 +281,7 @@ const StyledTextArea = styled.textarea`
 `;
 
 const StyledSearchSuggestionList = styled.ul`
-  height: ${props => props.height || "unset"};
+  height: ${({ height }) => height || "unset"};
   color: black;
   position: absolute;
   margin-top: 79px;
@@ -334,11 +327,10 @@ const ScrollToTopIcon = styled(Icon).attrs({ icon: arrowUp, size: 70 })``;
 const ScrollToTopIconSmaller = styled(Icon).attrs({ icon: arrowUp, size: 30 })``;
 
 const StyledScollToTop = styled.div`
-  height: ${props => props.height || 38 + 150}px;
-  /* height: calc(5% + 150px); */
+  height: ${({ height }) => height || 38 + 150}px;
   display: grid;
   grid-template-areas: "arrow gap text";
-  grid-template-columns: ${props => props.gridCol || "109px 120px auto"};
+  grid-template-columns: ${({ gridCol }) => gridCol || "109px 120px auto"};
   cursor: pointer;
   color: #6d6d6d;
 
@@ -360,7 +352,7 @@ const StyledScollToTop = styled.div`
     justify-content: center;
     display: flex;
     align-items: center;
-    font-size: ${props => props.fontSize};
+    font-size: ${({ fontSize }) => fontSize};
   }
 `;
 
@@ -380,7 +372,6 @@ export {
   ModalBackdrop,
   ScrollToTopIcon,
   StyledScollToTop,
-  // StyledScollToTopSmaller,
   ScrollToTopIconSmaller,
   StyledFreeTextForm,
 };

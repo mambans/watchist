@@ -15,6 +15,7 @@ export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) =
       />
       {item}
       <DeleteIcon
+        className='deleteIcon'
         onClick={() => {
           removeItem(item);
         }}

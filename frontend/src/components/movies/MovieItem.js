@@ -53,6 +53,7 @@ export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) =
       </div>
 
       <DeleteIcon
+        className='deleteIcon'
         onClick={() => {
           removeItem(item.Title);
         }}

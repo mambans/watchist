@@ -13,11 +13,13 @@ const DeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 24 })`
   position: absolute;
   right: 0;
   bottom: 0;
-  opacity: 0.7;
+  opacity: 0;
   z-index: 10;
   transition: all 300ms;
+  transition-delay: 0ms;
 
   &:hover {
+    transition-delay: 0ms;
     color: red;
     opacity: 1;
   }
@@ -51,6 +53,13 @@ const StyledSimpleListItem = styled.li`
   align-items: center;
   display: flex;
   /* padding: 10px; */
+
+  &:hover {
+    .deleteIcon {
+      opacity: 1;
+      transition-delay: 300ms;
+    }
+  }
 `;
 
 const StyledListItem = styled.li`
@@ -63,6 +72,13 @@ const StyledListItem = styled.li`
   grid-template-areas: "poster raitings title" "poster raitings details" "poster raitings actors" "poster raitings plot" "poster raitings awards";
   grid-template-columns: 109px 120px auto;
   grid-template-rows: 25% 12% 12% auto 12%;
+
+  &:hover {
+    .deleteIcon {
+      opacity: 1;
+      transition-delay: 500ms;
+    }
+  }
 
   #poster {
     height: 100%;

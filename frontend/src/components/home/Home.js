@@ -219,7 +219,6 @@ export default () => {
         })
         .then(async res => {
           try {
-            console.log("TCL: fetchLists -> res", res);
             const lists = res.data.Items[0];
 
             delete lists.Username;

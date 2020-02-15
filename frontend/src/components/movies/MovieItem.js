@@ -1,8 +1,42 @@
 import React from "react";
+import axios from "axios";
 
 import { DeleteIcon, StyledListItem } from "./../StyledComponents";
 
 export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) => {
+  const raitingLinks = {
+    "Internet Movie Database": {
+      url: "https://www.imdb.com/title/",
+      finalUrl: function() {
+        return this.url + item.imdbID;
+      },
+    },
+    "Rotten Tomatoes": {
+      url: "https://www.rottentomatoes.com/m/",
+      finalUrl: function() {
+        return (
+          this.url +
+          item.Title.replace(":", "")
+            .split(" ")
+            .join("_")
+            .toLowerCase()
+        );
+      },
+    },
+    Metacritic: {
+      url: "https://www.metacritic.com/movie/",
+      finalUrl: function() {
+        return (
+          this.url +
+          item.Title.replace(":", "")
+            .split(" ")
+            .join("-")
+            .toLowerCase()
+        );
+      },
+    },
+  };
+
   return (
     <StyledListItem title={item.Title} onDragOver={e => onDragOver(e, idx)}>
       <img
@@ -38,7 +72,7 @@ export default ({ item, removeItem, idx, onDragStart, onDragOver, onDragEnd }) =
                 .join("")
                 .toLowerCase()}
               key={raiting.Source}>
-              <a href={`https://www.imdb.com/title/${item.imdbID}`} draggable={false}>
+              <a href={raitingLinks[raiting.Source].finalUrl()} draggable={false}>
                 <img
                   src={`${process.env.PUBLIC_URL}/logos/${raiting.Source.split(" ")
                     .join("")

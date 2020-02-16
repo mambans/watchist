@@ -227,8 +227,11 @@ export default () => {
 
             localStorage.setItem("allLists", JSON.stringify(lists));
           } catch (error) {
-            console.log("TCL: fetchLists -> error", error.message);
-            if (error.message === `can't access property "Username", lists is undefined`) {
+            console.log(error.message);
+            if (
+              error.message === `can't access property "Username", lists is undefined` ||
+              error.message === `can't access property "Username", e.data.Items[0] is undefined`
+            ) {
               setAllLists([]);
             }
           }

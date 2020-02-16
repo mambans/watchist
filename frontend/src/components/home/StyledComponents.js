@@ -54,15 +54,18 @@ const StyledSidebar = styled.ul`
   margin: 0;
   height: 100%;
 
-
-
   #sidebarUsername {
     font-weight: bold;
     height: calc(1.5em + 0.75rem + 2px);
     margin-bottom: 0;
     font-size: 1.1rem;
     border-bottom: 1px solid #6b6b6b70;
-    background-image: linear-gradient(141deg, rgb(46, 62, 55) 0%, rgb(24, 91, 98) 51%, rgb(15, 71, 92) 75%);
+    background-image: linear-gradient(
+      141deg,
+      rgb(46, 62, 55) 0%,
+      rgb(24, 91, 98) 51%,
+      rgb(15, 71, 92) 75%
+    );
     display: grid;
     grid-template-areas: "logout name padding";
     grid-template-columns: 10% auto 10%;
@@ -71,7 +74,6 @@ const StyledSidebar = styled.ul`
     &:hover {
       i#logout {
         opacity: 1;
-
       }
     }
 
@@ -289,12 +291,13 @@ const NoListsAlert = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  border: 2px solid #c98a18;
+  border-bottom: 2px solid #c98a18;
 
   h1 {
     font-size: 3.5rem;
-    border: 2px solid;
-    color: #c98a18;
+    color: white;
+    font-family: Verdana, Geneva, sans-serif;
+    text-decoration: #c98a18 underline solid;
   }
 `;
 

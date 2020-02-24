@@ -300,15 +300,17 @@ const StyledSearchSuggestionList = styled.ul`
   height: ${({ height }) => height || "unset"};
   color: black;
   position: absolute;
-  margin-top: 79px;
-  width: calc((100% - 220px) * 0.7 - 0.7px);
+  /* margin-top: 79px; */
+  /* width: calc((100% - 220px) * 0.7 - 0.7px); */
+  width: ${({ width }) => width || "calc(1040px * 0.692)"}px;
   overflow: hidden;
   z-index: 5;
   background: white;
   padding: 10px 15px;
   list-style: none;
   border-radius: 0 0 10px 10px;
-  margin-left: calc((100% - 220px) * 0.19);
+  /* margin-left: 196px; */
+  /* margin-left: calc((100% - 220px) * 0.19); */
 
   li {
     cursor: pointer;

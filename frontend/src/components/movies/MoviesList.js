@@ -35,6 +35,7 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
   const previousSearch = useRef();
   const scrollToTop = useRef();
   const topItemRef = useRef();
+  const inputRef = useRef();
 
   const sortOptions = {
     Alphabetically: { name: "Alphabetically", func: sortFunctions.alphabetically },
@@ -178,7 +179,7 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
           listName={listName}
           list={list}
         />
-        <Form.Group controlId='formGroupUserName'>
+        <Form.Group controlId='formGroupMovie' ref={inputRef}>
           <Form.Control
             ref={formInput}
             type='text'
@@ -188,6 +189,32 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
               borderRadius: suggestions && suggestionsOpen ? "0.25rem 0.25rem 0 0" : "0.25rem",
             }}
           />
+          <CSSTransition
+            key='StyledSearchSuggestionList'
+            in={suggestions && suggestionsOpen}
+            timeout={250}
+            classNames='slideDown-250ms'
+            unmountOnExit>
+            <StyledSearchSuggestionList
+              height={"520px"}
+              width={inputRef.current ? inputRef.current.clientWidth : null}>
+              {Object.values(suggestions).map(item => {
+                return (
+                  <li key={item.imdbID} {...manualSet}>
+                    <img alt='' src={item.Poster}></img>
+                    {`${item.Title} (${item.Year})`}
+                  </li>
+                );
+              })}
+            </StyledSearchSuggestionList>
+          </CSSTransition>
+          {suggestions && suggestionsOpen ? (
+            <ModalBackdrop
+              onClick={() => {
+                setSuggestionsOpen(false);
+              }}
+            />
+          ) : null}
         </Form.Group>
         <Button variant='primary' type='submit'>
           Add
@@ -199,31 +226,6 @@ export default ({ list, listName, addListItem, removeListItem, updateLists }) =>
           }}>
           <SearchIcon />
         </Button>
-
-        <CSSTransition
-          key='StyledSearchSuggestionList'
-          in={suggestions && suggestionsOpen}
-          timeout={250}
-          classNames='slideDown-250ms'
-          unmountOnExit>
-          <StyledSearchSuggestionList height={"520px"}>
-            {Object.values(suggestions).map(item => {
-              return (
-                <li key={item.imdbID} {...manualSet}>
-                  <img alt='' src={item.Poster}></img>
-                  {`${item.Title} (${item.Year})`}
-                </li>
-              );
-            })}
-          </StyledSearchSuggestionList>
-        </CSSTransition>
-        {suggestions && suggestionsOpen ? (
-          <ModalBackdrop
-            onClick={() => {
-              setSuggestionsOpen(false);
-            }}
-          />
-        ) : null}
       </StyledAddForm>
 
       <StyledList>

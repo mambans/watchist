@@ -1,13 +1,14 @@
-import axios from "axios";
+import axios from 'axios';
 // import { getCookie } from "../utilities/Utilities";
 
 const onDragStart = (e, index, postOrderTimer, setDragSelected, list, type) => {
   clearTimeout(postOrderTimer.current);
   setDragSelected(list[index]);
-  e.dataTransfer.effectAllowed = "move";
-  e.target.parentNode.style.background = "rgb(80, 80, 80)";
-  e.dataTransfer.setData("text/html", e.target.parentNode);
-  type === "default"
+  e.dataTransfer.effectAllowed = 'move';
+  // e.target.parentNode.style.background = '#818797';
+  e.target.parentNode.style.background = 'var(--onDragBackground)';
+  e.dataTransfer.setData('text/html', e.target.parentNode);
+  type === 'default'
     ? e.dataTransfer.setDragImage(e.target.parentNode, 0, 25)
     : e.dataTransfer.setDragImage(e.target.parentNode, 49, 75);
 };
@@ -15,11 +16,11 @@ const onDragStart = (e, index, postOrderTimer, setDragSelected, list, type) => {
 const onDragOver = (index, list, dragSelected, updateLists, listName, type) => {
   const draggedOverItem = list[index];
 
-  if (type === "default") {
+  if (type === 'default') {
     if (dragSelected === draggedOverItem) return;
 
     if (draggedOverItem) {
-      let items = list.filter(item => item !== dragSelected);
+      let items = list.filter((item) => item !== dragSelected);
 
       items.splice(index, 0, dragSelected);
 
@@ -29,7 +30,7 @@ const onDragOver = (index, list, dragSelected, updateLists, listName, type) => {
     if (dragSelected.Title === draggedOverItem.Title) return;
 
     if (draggedOverItem) {
-      let items = list.filter(item => item.Title !== dragSelected.Title);
+      let items = list.filter((item) => item.Title !== dragSelected.Title);
 
       items.splice(index, 0, dragSelected);
 
@@ -39,16 +40,16 @@ const onDragOver = (index, list, dragSelected, updateLists, listName, type) => {
 };
 
 const onDragEnd = (e, username, postOrderTimer, list, listName, type) => {
-  e.target.parentNode.style.background = "inherit";
+  e.target.parentNode.style.background = 'inherit';
 
   postOrderTimer.current = setTimeout(async () => {
     await axios
       .put(`https://hqfxod3kld.execute-api.eu-north-1.amazonaws.com/Prod/list/update`, {
-        username: username,
-        listItems: { type: type, items: list },
-        listName: listName,
+        username  : username,
+        listItems : { type: type, items: list },
+        listName  : listName,
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e);
       });
   }, 5000);

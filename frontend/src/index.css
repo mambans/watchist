@@ -1,3 +1,13 @@
+html {
+  --onDragBackground: #5a6070;
+  --color1: #9ea5b9;
+  --color2: #818797;
+  --color3: #5a6070;
+  --backgroundLight: #232733;
+  --backgroundDark: #1c1f28;
+  --scrollbarColor: #3e414b;
+}
+
 body,
 html {
   margin: 0;
@@ -5,7 +15,8 @@ html {
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: rgb(40, 40, 40) !important;
+  /* background-color: rgb(40, 40, 40) !important; */
+  background-color: var(--backgroundLight) !important;
   min-height: 100vh;
 }
 
@@ -14,10 +25,11 @@ code {
 }
 
 :root {
-  scrollbar-color: rgb(33, 53, 66) rgb(5, 8, 10) !important;
+  scrollbar-color: var(--color1)var(--backgroundDark) !important;
   scrollbar-width: thin !important;
 }
 
 #root {
-  background-color: rgb(40, 40, 40);
+  /* background-color: rgb(40, 40, 40); */
+  background-color: var(--backgroundLight) !important;
 }

@@ -1,9 +1,9 @@
-import styled from "styled-components";
-import { ic_delete } from "react-icons-kit/md/ic_delete";
-import Icon from "react-icons-kit";
-import { Form } from "react-bootstrap";
+import styled from 'styled-components';
+import { ic_delete } from 'react-icons-kit/md/ic_delete';
+import Icon from 'react-icons-kit';
+import { Form } from 'react-bootstrap';
 
-const ListDeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 18 })`
+export const ListDeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 18 })`
   color: darkred;
   cursor: pointer;
   position: absolute;
@@ -22,20 +22,20 @@ const ListDeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 18 })`
   }
 `;
 
-const StyledLoadingContainer = styled.div`
+export const StyledLoadingContainer = styled.div`
   justify-content: center;
   display: grid;
   transition: all 2s ease-in;
   justify-items: center;
 
   h1 {
-    color: ${({ color }) => color || "grey"};
+    color: ${({ color }) => color || 'grey'};
     text-align: center;
-    font-size: ${({ fontSize }) => fontSize || "2.5rem"};
+    font-size: ${({ fontSize }) => fontSize || '2.5rem'};
   }
 `;
 
-const StyledCenterContainer = styled.div`
+export const StyledCenterContainer = styled.div`
   width: 100vw;
   height: 100vh;
   justify-content: center;
@@ -44,7 +44,7 @@ const StyledCenterContainer = styled.div`
   /* margin-top: -100px; */
 `;
 
-const StyledSidebar = styled.ul`
+export const StyledSidebar = styled.ul`
   color: rgb(240, 240, 240);
   padding: 0;
   list-style: none;
@@ -113,16 +113,16 @@ const StyledSidebar = styled.ul`
   }
 `;
 
-const StyledSidarbarAddListBackdrop = styled.div`
+export const StyledSidarbarAddListBackdrop = styled.div`
   height: calc(100% - ${({ nrLists }) => nrLists}px);
 `;
 
-const StyledSidarbarAddList = styled.li`
+export const StyledSidarbarAddList = styled.li`
   transition: all 300ms;
   box-shadow: 0px 2px 0px #ffffff70;
   font-weight: bold;
   cursor: pointer;
-  color: ${({ active }) => (active ? "white" : "rgb(220, 220, 220)")};
+  color: ${({ active }) => (active ? 'white' : 'rgb(220, 220, 220)')};
 
   min-height: 50px;
   align-content: center;
@@ -177,12 +177,12 @@ const StyledSidarbarAddList = styled.li`
   }
 `;
 
-const StyledSidarbarItem = styled.li`
+export const StyledSidarbarItem = styled.li`
   transition: all 300ms;
   box-shadow: 0px 2px 0px #ffffff70;
   cursor: pointer;
-  color: ${({ active }) => (active ? "white" : "rgb(220, 220, 220)")};
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
+  color: ${({ active }) => (active ? 'white' : 'rgb(220, 220, 220)')};
+  font-weight: ${({ active }) => (active ? 'bold' : 'normal')};
   height: 50px;
   align-content: center;
   display: grid;
@@ -198,7 +198,7 @@ const StyledSidarbarItem = styled.li`
   }
 
   i.arrow {
-    padding-left: ${({ active }) => (active ? "25px" : "5px")};
+    padding-left: ${({ active }) => (active ? '25px' : '5px')};
     transition: all 200ms;
     position: absolute;
     color: inherit;
@@ -219,15 +219,17 @@ const StyledSidarbarItem = styled.li`
   }
 `;
 
-const StyledMainContainer = styled.div`
-  background: rgb(24, 24, 24);
+export const StyledMainContainer = styled.div`
+  /* background: rgb(24, 24, 24); */
+  background: var(--backgroundDark);
   width: ${({ width }) => width || 1200}px;
-  height: ${({ height }) => height || "800px"};
+  max-width: 80%;
+  height: ${({ height }) => height || '800px'};
   border-radius: 10px;
   display: grid;
 
   grid-template-areas: "logo list" "sidebar list";
-  grid-template-columns: 250px auto;
+  grid-template-columns: minmax(150px, 20%) auto;
   grid-template-rows: calc(68px + 42px) auto;
   padding-right: 10px;
 
@@ -245,7 +247,7 @@ const StyledMainContainer = styled.div`
   }
 `;
 
-const StyledRightListContainer = styled.div`
+export const StyledRightListContainer = styled.div`
   height: 100%;
   overflow: hidden;
   /* transition: all 1s; */
@@ -259,10 +261,11 @@ const StyledRightListContainer = styled.div`
     text-align: center;
     margin: 0;
     padding: 10px;
+    color: var(--color1);
   }
 `;
 
-const StyledForm = styled(Form)`
+export const StyledForm = styled(Form)`
   display: flex;
   justify-content: center;
   /* align-items: center; */
@@ -286,7 +289,7 @@ const StyledForm = styled(Form)`
   }
 `;
 
-const NoListsAlert = styled.div`
+export const NoListsAlert = styled.div`
   height: 202px;
   align-items: center;
   display: flex;
@@ -301,16 +304,18 @@ const NoListsAlert = styled.div`
   }
 `;
 
-export {
-  StyledSidebar,
-  StyledCenterContainer,
-  StyledMainContainer,
-  StyledRightListContainer,
-  StyledSidarbarItem,
-  ListDeleteIcon,
-  StyledSidarbarAddList,
-  StyledLoadingContainer,
-  StyledSidarbarAddListBackdrop,
-  StyledForm,
-  NoListsAlert,
-};
+export const WelcomeMessage = styled.div`
+  height: 200px;
+  color: var(--color2);
+  font-size: 1.4rem;
+  text-align: center;
+
+  h1 {
+    color: var(--color1);
+    height: 110px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;

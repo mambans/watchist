@@ -26,6 +26,7 @@ import {
   StyledSidarbarAddListBackdrop,
   StyledForm,
   NoListsAlert,
+  WelcomeMessage,
 } from "./StyledComponents";
 import UserContext from "./UserContext";
 
@@ -250,7 +251,7 @@ export default () => {
   return (
     <>
       <StyledCenterContainer>
-        <StyledMainContainer height={"95%"} width={1300}>
+        <StyledMainContainer height={"95%"} width={1500}>
           <div id='logo'>
             <img src={`${process.env.PUBLIC_URL}/logo.png`} alt='' />
           </div>
@@ -343,6 +344,13 @@ export default () => {
             ) : null}
           </StyledSidebar>
           {!username ? (
+            <>
+            <WelcomeMessage>
+              <h1>Watchist</h1>
+              <p>
+              Create a variety of lists with auto fetching details(for movies/tv series) from public API's.
+              </p>
+            </WelcomeMessage>
             <StyledForm onSubmit={handleLogin} ovalidate='true' validated={validated}>
               <Form.Group controlId='formGroupUserName' required>
                 <Form.Label>Username</Form.Label>
@@ -353,6 +361,7 @@ export default () => {
                 <Button type='submit'>Login</Button>
               </Form.Group>
             </StyledForm>
+            </>
           ) : (
             <StyledRightListContainer height={"95%"}>{RenderListComp()}</StyledRightListContainer>
           )}

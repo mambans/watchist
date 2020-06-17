@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { ic_delete } from "react-icons-kit/md/ic_delete";
-import { ic_drag_handle } from "react-icons-kit/md/ic_drag_handle";
-import Icon from "react-icons-kit";
-import { Form, Alert } from "react-bootstrap";
-import { search } from "react-icons-kit/icomoon/search";
-import { arrowUp } from "react-icons-kit/fa/arrowUp";
+import styled from 'styled-components';
+import { ic_delete } from 'react-icons-kit/md/ic_delete';
+import { ic_drag_handle } from 'react-icons-kit/md/ic_drag_handle';
+import Icon from 'react-icons-kit';
+import { Form, Alert } from 'react-bootstrap';
+import { search } from 'react-icons-kit/icomoon/search';
+import { arrowUp } from 'react-icons-kit/fa/arrowUp';
 
 const DeleteIcon = styled(Icon).attrs({ icon: ic_delete, size: 24 })`
   color: darkred;
@@ -69,9 +69,11 @@ const StyledListItem = styled.li`
   height: 165px;
   display: grid;
 
-  grid-template-areas: "poster raitings title" "poster raitings details" "poster raitings actors" "poster raitings plot" "poster raitings awards";
+  grid-template-areas: "poster raitings title" "poster raitings details" "poster raitings actors"
+    "poster raitings plot" "poster raitings awards";
   grid-template-columns: 109px 120px auto;
   grid-template-rows: 25% 12% 12% auto 12%;
+  transition: background 200ms;
 
   &:hover {
     .deleteIcon {
@@ -229,12 +231,9 @@ const StyledList = styled.ul`
   padding: 0;
   overflow-y: scroll;
   margin: 0;
-  scrollbar-color: rgb(33, 53, 66) rgb(5, 8, 10) !important;
-  scrollbar-width: thin !important;
-
   padding: 5px;
   list-style: none;
-  scrollbar-color: rgb(54, 54, 54) rgb(24, 24, 24) !important;
+  scrollbar-color: var(--scrollbarColor) var(--backgroundDark) !important;
   scrollbar-width: thin !important;
   height: calc(100% - 168px);
   padding-left: 0;
@@ -290,19 +289,19 @@ const StyledTextArea = styled.textarea`
   padding: 7px;
   width: 100%;
   height: 100%;
-  scrollbar-color: rgb(33, 53, 66) rgb(5, 8, 10) !important;
+  scrollbar-color: var(--scrollbarColor) var(--backgroundDark) !important;
   scrollbar-width: thin !important;
   /* height: calc(95% - 68px - 40px - 37px - 20px); */
   height: calc(100% - 100px);
 `;
 
 const StyledSearchSuggestionList = styled.ul`
-  height: ${({ height }) => height || "unset"};
+  height: ${({ height }) => height || 'unset'};
   color: black;
   position: absolute;
   /* margin-top: 79px; */
   /* width: calc((100% - 220px) * 0.7 - 0.7px); */
-  width: ${({ width }) => width || "calc(1040px * 0.692)"}px;
+  width: ${({ width }) => width || 'calc(1040px * 0.692)'}px;
   overflow: hidden;
   z-index: 5;
   background: white;
@@ -348,7 +347,7 @@ const StyledScollToTop = styled.div`
   height: ${({ height }) => height || 38 + 150}px;
   display: grid;
   grid-template-areas: "arrow gap text";
-  grid-template-columns: ${({ gridCol }) => gridCol || "109px 120px auto"};
+  grid-template-columns: ${({ gridCol }) => gridCol || '109px 120px auto'};
   cursor: pointer;
   color: #6d6d6d;
 

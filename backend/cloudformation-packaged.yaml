@@ -21,7 +21,7 @@ Resources:
     Type: AWS::DynamoDB::Table
   FetchLists:
     Properties:
-      CodeUri: s3://watchist-deployment/24ec49a2db074d44d7fa5cdc09aad65d
+      CodeUri: s3://watchist-deployment/a7c7628ee11ab8a3d26205075129b848
       Description: Fetch all lists
       Environment:
         Variables:
@@ -45,7 +45,7 @@ Resources:
     Type: AWS::Serverless::Function
   RemoveList:
     Properties:
-      CodeUri: s3://watchist-deployment/24ec49a2db074d44d7fa5cdc09aad65d
+      CodeUri: s3://watchist-deployment/a7c7628ee11ab8a3d26205075129b848
       Description: Remove a specific list mentioned as a param.
       Environment:
         Variables:
@@ -71,7 +71,7 @@ Resources:
     Type: AWS::Serverless::Function
   UpdateList:
     Properties:
-      CodeUri: s3://watchist-deployment/24ec49a2db074d44d7fa5cdc09aad65d
+      CodeUri: s3://watchist-deployment/a7c7628ee11ab8a3d26205075129b848
       Description: Update a specific list mentioned as a param.
       Environment:
         Variables:

@@ -176,8 +176,8 @@ export default () => {
     }
 
     setValidated(true);
-    setUsername(form["0"].value);
-    document.cookie = `Watchist-Username=${form["0"].value}; path=/`;
+    setUsername(form["0"].value.toLowerCase());
+    document.cookie = `Watchist-Username=${form["0"].value.toLowerCase()}; path=/; SameSite=Lax`;
   };
 
   const handleLogout = event => {
@@ -220,6 +220,7 @@ export default () => {
         })
         .then(async res => {
           try {
+            if(res.data.Items.length >= 1 && res.data.Items[0].Username) {
             const lists = res.data.Items[0];
 
             delete lists.Username;
@@ -227,14 +228,12 @@ export default () => {
             setListName(Object.keys(lists)[0]);
 
             localStorage.setItem("allLists", JSON.stringify(lists));
-          } catch (error) {
-            console.log(error.message);
-            if (
-              error.message === `can't access property "Username", lists is undefined` ||
-              error.message === `can't access property "Username", e.data.Items[0] is undefined`
-            ) {
+            } else {
               setAllLists([]);
             }
+          } catch (error) {
+            console.error(error.message);
+            setAllLists([]);
           }
         })
         .catch(e => {

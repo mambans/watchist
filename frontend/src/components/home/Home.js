@@ -8,7 +8,7 @@ import Icon from "react-icons-kit";
 import React, { useState, useEffect, useContext } from "react";
 import { logout } from "react-icons-kit/iconic/logout";
 
-import "./../transitions.scss";
+import "./../transitions.css";
 import DefaultList from "./../default/DefaultList";
 import FreeText from "./../freeText/FreeText";
 import Loading from "./Loading";
